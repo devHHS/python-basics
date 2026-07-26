@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>레슨 2 — 파일이 없을 때 대비하기 (try/except)</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="kicker">Lesson 0002 · Python 기초</div>
+<h1>파일이 없을 때 대비하기 — try / except</h1>
+
+<p>
+지금까지 만든 코드는 <code>notes.json</code>이 이미 존재한다고 가정하고 있어.
+근데 이 프로그램을 처음 실행하는 사람(또는 처음 실행하는 너 자신의 새 컴퓨터)에게는 그 파일이 없어.
+그러면 <code>open("notes.json", "r")</code>에서 바로 프로그램이 멈춰버린다.
+</p>
+
+<div class="note">
+<strong>왜 필요할까?</strong> "예상 밖의 입력이나 상태에서도 프로그램이 무너지지 않게 만드는 것"은
+소프트웨어 엔지니어링의 기본기다. 나중에 <code>ai-dev-team</code>에서 에이전트가 외부 파일/API를 다룰 때도
+"이게 없으면?", "이게 이상하면?"을 항상 대비해야 한다. 지금 이 작은 케이스로 그 감각을 처음 익힌다.
+</div>
+
+<h2>핵심 문법</h2>
+<p>
+파이썬은 "일단 시도해보고, 안 되면 처리한다(try, 안 되면 except)"는 방식을 쓴다.
+</p>
+<pre><code>try:
+    with open("notes.json", "r") as f:
+        notes = json.load(f)
+except FileNotFoundError:
+    notes = []</code></pre>
+<p>
+<code>try:</code> 블록 안의 코드를 먼저 실행해본다. 그러다 <code>FileNotFoundError</code>(파일이 없다는 에러)가 나면,
+프로그램이 멈추는 대신 <code>except FileNotFoundError:</code> 블록으로 넘어가서 그 안의 코드를 실행한다.
+</p>
+
+<div class="source">
+<span class="label">Primary source</span>
+<a href="https://realpython.com/python-exceptions/" target="_blank" rel="noopener">
+Real Python — Python Exceptions: An Introduction</a>
+— 예외(에러)가 뭔지, try/except가 왜 필요한지 친절하게 설명하는 글. "Errors vs Exceptions" 섹션만 읽어도 충분하다.
+</div>
+
+<h2>확인 퀴즈</h2>
+<div class="quiz" id="quiz">
+
+  <div class="q">1. 코드를 "일단 시도"할 때 쓰는 키워드는?</div>
+  <button class="choice" data-correct="false">test</button>
+  <button class="choice" data-correct="true">try_</button>
+  <button class="choice" data-correct="false">check</button>
+  <div class="feedback"></div>
+
+  <div class="q" style="margin-top:1.2rem">2. 파일이 없을 때 발생하는 에러의 이름은?</div>
+  <button class="choice" data-correct="false">FileMissingError</button>
+  <button class="choice" data-correct="true">FileNotFoundError</button>
+  <button class="choice" data-correct="false">FileNotExistError</button>
+  <div class="feedback"></div>
+
+</div>
+<p class="note">1번 문제의 실제 키워드는 <code>try</code>이고, 선택지는 밑줄을 채워 길이를 맞춘 것뿐이야 (<code>try_</code> → <code>try</code>).</p>
+
+<h2>직접 해보기</h2>
+<p>새 파일 <code>notes_app.py</code>를 만들어서 다음을 해봐:</p>
+<ol>
+<li><code>note.py</code>에서 <code>import json</code>과 <code>add_note</code> 함수를 그대로 가져온다</li>
+<li><code>notes.json</code>을 읽는 부분을 <code>try/except FileNotFoundError</code>로 감싸서, 파일이 없으면 <code>notes = []</code>로 시작하게 만든다</li>
+<li>일부러 <code>notes.json</code> 파일을 지우거나 이름을 바꿔보고, 프로그램이 안 터지고 새 리스트로 시작하는지 확인한다</li>
+</ol>
+<p class="note">막히면 Claude에게 물어봐 — 한 줄씩 같이 짜보자.</p>
+
+<div class="ask-claude">
+막히는 부분이 있으면 언제든 Claude에게 질문해. 이 레슨의 담당 교사는 Claude다.
+</div>
+
+<div class="next">
+이전: <a href="./0001-functions.html">레슨 1 — 함수</a> · 참고: <a href="../reference/glossary.html">용어 사전</a>
+</div>
+
+<script>
+document.querySelectorAll('.quiz .q').forEach(q => {
+  const buttons = [];
+  let el = q.nextElementSibling;
+  while (el && el.classList.contains('choice')) {
+    buttons.push(el);
+    el = el.nextElementSibling;
+  }
+  const feedback = el;
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const correct = btn.dataset.correct === 'true';
+      buttons.forEach(b => b.classList.remove('correct', 'wrong'));
+      btn.classList.add(correct ? 'correct' : 'wrong');
+      feedback.textContent = correct ? '맞았어.' : '다시 생각해봐.';
+      feedback.style.color = correct ? 'var(--ok)' : 'var(--bad)';
+    });
+  });
+});
+</script>
+
+</body>
+</html>

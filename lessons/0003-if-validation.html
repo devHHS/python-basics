@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>레슨 3 — 빈 입력값 막기 (if)</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="kicker">Lesson 0003 · Python 기초</div>
+<h1>빈 입력값 막기 — if문</h1>
+
+<p>
+지금 <code>notes_app.py</code>는 제목/내용에 그냥 엔터만 쳐도(빈 문자열이어도) 노트로 저장해버려.
+쓸모없는 빈 노트가 쌓이는 걸 막으려면, "조건에 따라 다르게 행동하는" 방법이 필요하다.
+</p>
+
+<div class="note">
+<strong>왜 필요할까?</strong> "사용자가 이상한 값을 넣었을 때 어떻게 할지"는 모든 프로그램이 마주치는 문제다.
+지금은 빈 문자열 하나지만, 나중에 <code>ai-dev-team</code>에서 에이전트가 받은 입력이 형식에 안 맞을 때도
+똑같은 판단(조건 → 분기)이 필요하다.
+</div>
+
+<h2>핵심 문법</h2>
+<p><code>if</code>로 조건을 검사하고, 조건이 참(True)일 때만 그 아래 들여쓴 코드를 실행한다.</p>
+<pre><code>if title == "":
+    print("제목을 입력해야 해요")</code></pre>
+<p>
+파이썬에서는 빈 문자열 <code>""</code>이 <strong>거짓(False)</strong>처럼 취급된다.
+그래서 <code>if title:</code> 만 써도 "title이 비어있지 않으면"이라는 뜻이 된다.
+그리고 사용자가 실수로 공백만 입력(<code>"   "</code>)했을 때도 걸러내려면, 앞뒤 공백을 지우는
+<code>.strip()</code>을 같이 쓴다.
+</p>
+<pre><code>title = input("제목이 뭔가요: ").strip()
+if title == "" or content == "":
+    print("제목과 내용을 모두 입력해야 해요")
+else:
+    notes = add_note(notes, title, content)</code></pre>
+
+<div class="source">
+<span class="label">Primary source</span>
+<a href="https://docs.python.org/3/reference/expressions.html#truth-value-testing" target="_blank" rel="noopener">
+Python 공식 문서 — Truth Value Testing</a>
+— 어떤 값들이 파이썬에서 "거짓"으로 취급되는지 정리한 표. <code>""</code>, <code>0</code>, <code>[]</code> 등이 모두 거짓이라는 걸 확인해봐.
+</div>
+
+<h2>확인 퀴즈</h2>
+<div class="quiz" id="quiz">
+
+  <div class="q">1. 파이썬에서 빈 문자열 <code>""</code>은 조건문에서 어떻게 취급될까?</div>
+  <button class="choice" data-correct="true">False</button>
+  <button class="choice" data-correct="false">True_</button>
+  <button class="choice" data-correct="false">Error</button>
+  <div class="feedback"></div>
+
+  <div class="q" style="margin-top:1.2rem">2. 문자열 앞뒤의 공백을 지우는 메서드는?</div>
+  <button class="choice" data-correct="false">.trim()</button>
+  <button class="choice" data-correct="true">.strip()</button>
+  <button class="choice" data-correct="false">.clean()</button>
+  <div class="feedback"></div>
+
+</div>
+
+<h2>직접 해보기</h2>
+<p><code>notes_app.py</code>를 열어서:</p>
+<ol>
+<li><code>title</code>, <code>content</code>를 받을 때 <code>.strip()</code>을 붙인다</li>
+<li>둘 중 하나라도 비어있으면 <code>add_note</code>를 호출하지 말고 안내 메시지만 출력하도록 <code>if</code>/<code>else</code>로 분기한다</li>
+<li>일부러 제목을 빈 칸으로 실행해보고, 저장되지 않는지 확인한다</li>
+</ol>
+<p class="note">막히면 Claude에게 물어봐 — 조건을 어디에 놓아야 할지 같이 짚어보자.</p>
+
+<div class="ask-claude">
+막히는 부분이 있으면 언제든 Claude에게 질문해. 이 레슨의 담당 교사는 Claude다.
+</div>
+
+<div class="next">
+이전: <a href="./0002-error-handling.html">레슨 2 — try/except</a> · 참고: <a href="../reference/glossary.html">용어 사전</a>
+</div>
+
+<script>
+document.querySelectorAll('.quiz .q').forEach(q => {
+  const buttons = [];
+  let el = q.nextElementSibling;
+  while (el && el.classList.contains('choice')) {
+    buttons.push(el);
+    el = el.nextElementSibling;
+  }
+  const feedback = el;
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const correct = btn.dataset.correct === 'true';
+      buttons.forEach(b => b.classList.remove('correct', 'wrong'));
+      btn.classList.add(correct ? 'correct' : 'wrong');
+      feedback.textContent = correct ? '맞았어.' : '다시 생각해봐.';
+      feedback.style.color = correct ? 'var(--ok)' : 'var(--bad)';
+    });
+  });
+});
+</script>
+
+</body>
+</html>

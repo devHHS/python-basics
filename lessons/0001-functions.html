@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>레슨 1 — 함수로 코드 정리하기</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="kicker">Lesson 0001 · Python 기초</div>
+<h1>함수(function)로 코드 정리하기</h1>
+
+<p>
+지금까지 짠 <code>note.py</code>는 위에서 아래로 코드가 쭉 나열되어 있어.
+노트를 추가하는 로직, 저장하는 로직, 출력하는 로직이 전부 한 덩어리로 뒤섞여 있지.
+이 레슨에서는 그 중 "노트 하나를 추가하는" 부분을 <strong>함수</strong>로 떼어내는 법을 배운다.
+</p>
+
+<div class="note">
+<strong>왜 필요할까?</strong> 나중에 <code>ai-dev-team</code>에서 여러 에이전트가 협업하는 코드를 짤 때,
+코드가 지금보다 훨씬 커진다. 그때 "의미 단위로 이름 붙여 나누는 능력"이 없으면 코드를 읽을 수도, 고칠 수도 없게 된다.
+함수는 그 능력의 가장 작은 단위다.
+</div>
+
+<h2>핵심 문법</h2>
+<p><code>def</code>로 함수를 정의하고, 함수 안에서 만든 결과를 밖으로 돌려주고 싶으면 <code>return</code>을 쓴다.</p>
+<pre><code>def add_note(notes, title, content):
+    note = {"title": title, "content": content}
+    notes.append(note)
+    return notes</code></pre>
+<p>
+괄호 안의 <code>notes, title, content</code>는 <strong>매개변수(parameter)</strong> — 이 함수가 일할 때 필요한 재료를 밖에서 받아오는 이름표다.
+함수를 실제로 쓸 때는 이렇게 호출한다:
+</p>
+<pre><code>notes = add_note(notes, title, content)</code></pre>
+
+<div class="source">
+<span class="label">Primary source</span>
+<a href="https://docs.python.org/3/tutorial/controlflow.html#defining-functions" target="_blank" rel="noopener">
+Python 공식 튜토리얼 — Defining Functions</a>
+— 함수 정의 문법을 5분 안에 훑어볼 수 있는 공식 문서. 기본값 인자 등 다음 레슨에서 쓸 내용도 여기 있다.
+</div>
+
+<h2>확인 퀴즈</h2>
+<div class="quiz" id="quiz">
+
+  <div class="q">1. 함수를 정의할 때 쓰는 키워드는?</div>
+  <button class="choice" data-correct="false">fun</button>
+  <button class="choice" data-correct="true">def</button>
+  <button class="choice" data-correct="false">fnc</button>
+  <div class="feedback"></div>
+
+  <div class="q" style="margin-top:1.2rem">2. 함수 안에서 만든 값을 밖으로 돌려줄 때 쓰는 키워드는?</div>
+  <button class="choice" data-correct="false">output</button>
+  <button class="choice" data-correct="false">revert</button>
+  <button class="choice" data-correct="true">return</button>
+  <div class="feedback"></div>
+
+  <div class="q" style="margin-top:1.2rem">3. 정의해둔 <code>add_note</code> 함수를 실제로 실행하는 코드는?</div>
+  <button class="choice" data-correct="false">get_note()</button>
+  <button class="choice" data-correct="false">set_note()</button>
+  <button class="choice" data-correct="true">add_note()</button>
+  <div class="feedback"></div>
+
+</div>
+
+<h2>직접 해보기</h2>
+<p>
+<code>note.py</code>를 열어서, note를 만들고 <code>notes.append(note)</code>하는 부분(13번째 줄과 27번째 줄)을
+<code>add_note(notes, title, content)</code> 함수로 직접 옮겨봐. 함수는 파일 맨 위, <code>import json</code> 바로 아래에 정의하면 된다.
+</p>
+<p class="note">힌트가 필요하거나 막히면 Claude에게 바로 물어봐 — 이 함수를 어디에 놓아야 할지, 왜 에러가 나는지 같이 읽어줄 거야.</p>
+
+<div class="ask-claude">
+막히는 부분이 있으면 언제든 Claude에게 질문해. 이 레슨의 담당 교사는 Claude다.
+</div>
+
+<div class="next">
+다음: <a href="../reference/glossary.html">용어 사전</a>에서 지금까지 배운 문법을 한눈에 복습하거나,
+완료되면 다음 레슨(파일이 없을 때 에러 처리)으로 이어갈 수 있어.
+</div>
+
+<script>
+document.querySelectorAll('.quiz .q').forEach(q => {
+  const buttons = [];
+  let el = q.nextElementSibling;
+  while (el && el.classList.contains('choice')) {
+    buttons.push(el);
+    el = el.nextElementSibling;
+  }
+  const feedback = el;
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const correct = btn.dataset.correct === 'true';
+      buttons.forEach(b => b.classList.remove('correct', 'wrong'));
+      btn.classList.add(correct ? 'correct' : 'wrong');
+      feedback.textContent = correct ? '맞았어.' : '다시 생각해봐.';
+      feedback.style.color = correct ? 'var(--ok)' : 'var(--bad)';
+    });
+  });
+});
+</script>
+
+</body>
+</html>

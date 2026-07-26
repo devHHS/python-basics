@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>레슨 5 — 리스트에서 검색하고 지우기</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="kicker">Lesson 0005 · Python 기초</div>
+<h1>리스트에서 검색하고 지우기</h1>
+
+<p>
+지금까지는 노트를 추가만 했지, 특정 노트를 찾거나 지우는 방법은 없었어.
+이번 레슨에서는 제목으로 노트를 <strong>찾는 함수</strong>와 <strong>지우는 함수</strong>를 만든다.
+</p>
+
+<div class="note">
+<strong>왜 필요할까?</strong> "리스트에서 조건에 맞는 걸 찾기"는 정말 자주 쓰는 패턴이다.
+나중에 <code>ai-dev-team</code>에서 "이 조건에 맞는 작업/에이전트를 찾아라" 같은 로직도 결국 같은 모양이다.
+</div>
+
+<h2>핵심 문법 1 — 인덱스와 함께 순회하기: enumerate()</h2>
+<p>
+지금까지 <code>for n in notes:</code>로 원소만 꺼냈다면, <code>enumerate()</code>를 쓰면
+"몇 번째인지(인덱스)"와 "원소" 둘 다 꺼낼 수 있다. 지우려면 원소가 몇 번째에 있는지(인덱스)가 필요하다.
+</p>
+<pre><code>for i, n in enumerate(notes):
+    print(i, n["title"])</code></pre>
+
+<h2>핵심 문법 2 — 찾기</h2>
+<pre><code>def find_note(notes, title):
+    for n in notes:
+        if n["title"] == title:
+            return n
+    return None</code></pre>
+<p>
+찾으면 그 자리에서 바로 <code>return</code>해서 함수를 끝낸다. 끝까지 못 찾으면 <code>None</code>(값이 없다는 뜻)을 돌려준다.
+</p>
+
+<h2>핵심 문법 3 — 지우기</h2>
+<pre><code>def delete_note(notes, title):
+    for i, n in enumerate(notes):
+        if n["title"] == title:
+            del notes[i]
+            return notes
+    return notes</code></pre>
+<p>
+<code>del notes[i]</code>는 리스트의 <code>i</code>번째 원소를 지운다. 인덱스를 알아야 하니까 여기선 <code>enumerate()</code>가 필요하다.
+</p>
+
+<div class="source">
+<span class="label">Primary source</span>
+<a href="https://docs.python.org/3/library/functions.html#enumerate" target="_blank" rel="noopener">
+Python 공식 문서 — enumerate()</a>
+— enumerate가 정확히 뭘 돌려주는지 확인해봐. (인덱스, 원소) 쌍을 하나씩 만들어준다는 걸 기억하면 충분하다.
+</div>
+
+<h2>확인 퀴즈</h2>
+<div class="quiz" id="quiz">
+
+  <div class="q">1. 리스트를 순회하며 인덱스도 같이 얻고 싶을 때 쓰는 함수는?</div>
+  <button class="choice" data-correct="false">indexed</button>
+  <button class="choice" data-correct="true">enumerate</button>
+  <button class="choice" data-correct="false">iterwith</button>
+  <div class="feedback"></div>
+
+  <div class="q" style="margin-top:1.2rem">2. 리스트에서 특정 인덱스의 원소를 지우는 코드는?</div>
+  <button class="choice" data-correct="true">del notes[i]</button>
+  <button class="choice" data-correct="false">rm notes[i]</button>
+  <button class="choice" data-correct="false">cut notes[i]</button>
+  <div class="feedback"></div>
+
+  <div class="q" style="margin-top:1.2rem">3. 찾는 값이 리스트에 없을 때 함수가 돌려줘야 할 값은?</div>
+  <button class="choice" data-correct="false">"없음"</button>
+  <button class="choice" data-correct="false">False</button>
+  <button class="choice" data-correct="true">None</button>
+  <div class="feedback"></div>
+
+</div>
+
+<h2>직접 해보기</h2>
+<p><code>notes_app.py</code>에 (또는 실험하고 싶으면 새 파일에) 다음을 추가해봐:</p>
+<ol>
+<li><code>find_note(notes, title)</code> 함수를 정의한다</li>
+<li><code>delete_note(notes, title)</code> 함수를 정의한다</li>
+<li>맨 아래 <code>print(notes)</code> 다음에, 존재하는 제목과 존재하지 않는 제목 둘 다로
+  <code>find_note</code>를 호출해서 결과를 <code>print</code>해본다 (하나는 노트가 나오고, 하나는 <code>None</code>이 나와야 한다)</li>
+<li><code>delete_note</code>도 실제 제목으로 호출해보고, 그 뒤 <code>notes.json</code>에서 정말 지워졌는지 확인한다
+  (지우고 나서 다시 <code>json.dump</code>로 저장해야 파일에도 반영된다)</li>
+</ol>
+<p class="note">UI(메뉴로 골라서 삭제하기)는 다음 레슨에서 다룬다. 지금은 함수 두 개가 제대로 동작하는지에만 집중해봐.</p>
+
+<div class="ask-claude">
+막히는 부분이 있으면 언제든 Claude에게 질문해. 이 레슨의 담당 교사는 Claude다.
+</div>
+
+<div class="next">
+이전: <a href="./0004-while-loop.html">레슨 4 — while문</a> · 참고: <a href="../reference/glossary.html">용어 사전</a>
+</div>
+
+<script>
+document.querySelectorAll('.quiz .q').forEach(q => {
+  const buttons = [];
+  let el = q.nextElementSibling;
+  while (el && el.classList.contains('choice')) {
+    buttons.push(el);
+    el = el.nextElementSibling;
+  }
+  const feedback = el;
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const correct = btn.dataset.correct === 'true';
+      buttons.forEach(b => b.classList.remove('correct', 'wrong'));
+      btn.classList.add(correct ? 'correct' : 'wrong');
+      feedback.textContent = correct ? '맞았어.' : '다시 생각해봐.';
+      feedback.style.color = correct ? 'var(--ok)' : 'var(--bad)';
+    });
+  });
+});
+</script>
+
+</body>
+</html>

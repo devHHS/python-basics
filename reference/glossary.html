@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>Python 기초 용어 사전</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="kicker">Reference</div>
+<h1>Python 기초 용어 사전</h1>
+<p class="note">배운 용어를 여기에 계속 누적한다. 새 레슨에서 이 문서를 링크로 참조한다.</p>
+
+<h2>input()</h2>
+<p>프로그램을 멈추고 사용자가 키보드로 입력한 뒤 엔터를 칠 때까지 기다렸다가, 입력한 내용을 <strong>문자열(str)</strong>로 돌려준다.</p>
+<pre><code>title = input("제목이 뭔가요: ")</code></pre>
+
+<h2>딕셔너리 (dict)</h2>
+<p><code>{key: value}</code> 쌍으로 여러 값을 하나로 묶는 자료구조. 서로 관련 있는 값을 하나의 이름 아래 모을 때 쓴다.</p>
+<pre><code>note = {"title": title, "content": content}
+note["title"]  # "제목"</code></pre>
+
+<h2>리스트 (list)</h2>
+<p><code>[]</code> 안에 값 여러 개를 순서대로 담는 자료구조. <code>.append(x)</code>로 끝에 추가한다.</p>
+<pre><code>notes = []
+notes.append(note)</code></pre>
+
+<h2>for문</h2>
+<p>리스트(또는 다른 순회 가능한 것) 안의 원소를 하나씩 꺼내서, 원소 개수만큼 반복 실행한다.</p>
+<pre><code>for n in notes:
+    print(n["title"])</code></pre>
+
+<h2>파일 열기 — with open(...) as f</h2>
+<p><code>open(경로, 모드)</code>로 파일을 열고, <code>with</code>를 쓰면 블록이 끝날 때 자동으로 파일을 닫아준다. 모드: <code>"r"</code> 읽기, <code>"w"</code> 쓰기.</p>
+<pre><code>with open("notes.json", "r") as f:
+    notes = json.load(f)  # f는 "열린 파일 객체" — 파일 이름(문자열)이 아니다</code></pre>
+<p class="note">흔한 실수: <code>json.load("notes.json")</code>처럼 파일 이름을 직접 넘기면 <code>AttributeError: 'str' object has no attribute 'read'</code> 에러가 난다. <code>json.load()</code>는 열린 파일 객체가 필요하다.</p>
+
+<h2>json.dump / json.load</h2>
+<p>파이썬 자료구조(dict, list)를 파일에 저장하고 다시 불러오는 표준 라이브러리 함수.</p>
+<pre><code>json.dump(notes, f)   # 저장: notes를 f에 씀
+notes = json.load(f)  # 불러오기: f에서 읽어서 돌려줌</code></pre>
+
+<h2>함수 (def)</h2>
+<p>반복되거나 의미 단위로 묶을 수 있는 코드를 이름 붙여 재사용하는 방법. <a href="../lessons/0001-functions.html">레슨 1</a> 참고.</p>
+<pre><code>def add_note(notes, title, content):
+    notes.append({"title": title, "content": content})
+    return notes</code></pre>
+
+<h2>try / except</h2>
+<p>"일단 시도해보고, 특정 에러가 나면 처리한다"는 구조. <code>try</code> 블록에서 에러가 나면 프로그램이 멈추는 대신 <code>except</code> 블록으로 넘어간다. <a href="../lessons/0002-error-handling.html">레슨 2</a> 참고.</p>
+<pre><code>try:
+    with open("notes.json", "r") as f:
+        notes = json.load(f)
+except FileNotFoundError:
+    notes = []</code></pre>
+
+<h2>if / else, truth value testing</h2>
+<p>조건에 따라 다른 코드를 실행한다. 빈 문자열 <code>""</code>, 숫자 <code>0</code>, 빈 리스트 <code>[]</code>는 파이썬에서 거짓(False)으로 취급된다. <a href="../lessons/0003-if-validation.html">레슨 3</a> 참고.</p>
+<pre><code>title = input("제목: ").strip()
+if title == "":
+    print("제목을 입력해야 해요")
+else:
+    notes = add_note(notes, title, content)</code></pre>
+
+<h2>.strip()</h2>
+<p>문자열 앞뒤의 공백(스페이스, 줄바꿈 등)을 제거하는 문자열 메서드. 사용자가 실수로 공백만 입력했을 때를 걸러낼 때 쓴다.</p>
+<pre><code>"  안녕  ".strip()  # "안녕"</code></pre>
+
+<h2>while문</h2>
+<p>조건이 참인 동안 계속 반복한다. <code>for</code>문과 달리 몇 번 반복할지 미리 알 수 없을 때 쓴다. 조건에 쓰인 변수를 블록 안에서 갱신하지 않으면 무한 루프에 빠진다. <a href="../lessons/0004-while-loop.html">레슨 4</a> 참고.</p>
+<pre><code>title = input("제목: ").strip()
+while title == "":
+    print("제목을 입력해야 해요")
+    title = input("제목: ").strip()</code></pre>
+
+<h2>enumerate()</h2>
+<p>리스트를 순회하며 (인덱스, 원소) 쌍을 하나씩 돌려준다. 원소를 지우거나 위치가 필요할 때 쓴다. <a href="../lessons/0005-list-search-delete.html">레슨 5</a> 참고.</p>
+<pre><code>for i, n in enumerate(notes):
+    print(i, n["title"])</code></pre>
+
+<h2>del / 리스트에서 찾기</h2>
+<p><code>del notes[i]</code>는 리스트의 i번째 원소를 지운다. 못 찾았을 때는 <code>None</code>을 돌려주는 관례를 쓴다.</p>
+<pre><code>def find_note(notes, title):
+    for n in notes:
+        if n["title"] == title:
+            return n
+    return None
+
+def delete_note(notes, title):
+    for i, n in enumerate(notes):
+        if n["title"] == title:
+            del notes[i]
+            return notes
+    return notes</code></pre>
+
+<h2>while True / break / elif</h2>
+<p><code>while True:</code>는 무조건 반복하며, <code>break</code>로 그 자리에서 빠져나온다. 조건이 여러 개면 <code>elif</code>로 이어 붙인다. <a href="../lessons/0006-menu-loop.html">레슨 6</a> 참고.</p>
+<pre><code>while True:
+    choice = input("1.추가 2.찾기 3.삭제 4.종료: ").strip()
+    if choice == "1":
+        ...
+    elif choice == "4":
+        break
+    else:
+        print("잘못된 선택이에요")</code></pre>
+
+</body>
+</html>

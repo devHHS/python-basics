@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>레슨 6 — 메뉴 만들기 (while True + break)</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="kicker">Lesson 0006 · Python 기초</div>
+<h1>메뉴 만들기 — while True + break</h1>
+
+<p>
+지금까지 만든 <code>add_note</code>, <code>find_note</code>, <code>delete_note</code>는 코드 안에 박혀서
+한 번 실행하면 정해진 동작만 해. 이번 레슨에서는 "종료를 선택할 때까지 계속 메뉴를 보여주는" 프로그램으로 묶는다.
+</p>
+
+<div class="note">
+<strong>왜 필요할까?</strong> 지금까지 만든 함수들은 "재료"였고, 메뉴 루프는 그 재료들을 실제 사용자가
+쓸 수 있는 하나의 프로그램으로 조립하는 마지막 단계다. <code>ai-dev-team</code>에서도 에이전트가
+"다음에 뭘 할지"를 계속 반복해서 선택하는 구조가 결국 이 패턴이다.
+</div>
+
+<h2>핵심 문법 1 — while True</h2>
+<p>
+<code>while True:</code>는 조건이 항상 참이라 "무조건 반복"한다. 대신 안에 반드시
+<code>break</code>(반복을 그 자리에서 즉시 멈추는 명령)로 빠져나갈 방법을 만들어줘야 한다.
+</p>
+<pre><code>while True:
+    choice = input("종료하려면 4: ").strip()
+    if choice == "4":
+        break</code></pre>
+
+<h2>핵심 문법 2 — if / elif / else 체인</h2>
+<p>
+조건이 여러 개일 때는 <code>elif</code>("else if"의 줄임)로 이어 붙인다. 위에서부터 순서대로 검사해서
+맞는 조건 하나만 실행된다.
+</p>
+<pre><code>if choice == "1":
+    ...
+elif choice == "2":
+    ...
+elif choice == "3":
+    ...
+elif choice == "4":
+    break
+else:
+    print("잘못된 선택이에요")</code></pre>
+
+<div class="source">
+<span class="label">Primary source</span>
+<a href="https://docs.python.org/3/tutorial/controlflow.html#break-and-continue-statements-and-else-clauses-on-loops" target="_blank" rel="noopener">
+Python 공식 튜토리얼 — break 문</a>
+— break가 반복문을 어떻게 즉시 멈추는지 확인해봐.
+</div>
+
+<h2>확인 퀴즈</h2>
+<div class="quiz" id="quiz">
+
+  <div class="q">1. 조건 없이 무조건 반복하는 while 문은?</div>
+  <button class="choice" data-correct="false">while 1</button>
+  <button class="choice" data-correct="true">while True</button>
+  <button class="choice" data-correct="false">while loop</button>
+  <div class="feedback"></div>
+
+  <div class="q" style="margin-top:1.2rem">2. 반복문을 그 자리에서 즉시 멈추는 키워드는?</div>
+  <button class="choice" data-correct="false">stop</button>
+  <button class="choice" data-correct="true">break</button>
+  <button class="choice" data-correct="false">exit_</button>
+  <div class="feedback"></div>
+
+  <div class="q" style="margin-top:1.2rem">3. "else if"를 줄여 쓴 파이썬 키워드는?</div>
+  <button class="choice" data-correct="true">elif</button>
+  <button class="choice" data-correct="false">elsif</button>
+  <button class="choice" data-correct="false">elseif</button>
+  <div class="feedback"></div>
+
+</div>
+
+<h2>직접 해보기</h2>
+<p><code>notes_app.py</code>를 메뉴 프로그램으로 다시 짜보자:</p>
+<ol>
+<li>맨 위에서 <code>notes</code>를 한 번 불러오는 부분(try/except)은 그대로 둔다</li>
+<li>그 아래를 <code>while True:</code> 블록으로 감싼다</li>
+<li>매 반복마다 <code>"1. 추가 / 2. 찾기 / 3. 삭제 / 4. 종료"</code> 같은 메뉴를 <code>input()</code>으로 보여준다</li>
+<li><code>if</code>/<code>elif</code>/<code>else</code>로 선택에 따라 <code>add_note</code>, <code>find_note</code>, <code>delete_note</code>를 호출한다
+  (제목/내용 입력받는 부분은 레슨 3~4에서 만든 while 검증을 그대로 재사용하면 된다)</li>
+<li>"4. 종료"를 선택하면 <code>json.dump</code>로 저장하고 <code>break</code>한다</li>
+<li>레슨 5에서 테스트용으로 넣었던 <code>find_note(notes, "6")</code>, <code>delete_note(notes, "6")</code> 같은
+  하드코딩된 호출은 이제 지워도 된다 (메뉴로 대체되니까)</li>
+</ol>
+<p class="note">한 번에 다 하려 하지 말고, 메뉴 틀(선택지 보여주고 4번으로 종료)부터 만들고, 그다음 1번(추가)만 연결해서 테스트하고,
+그다음 2번, 3번 순서로 하나씩 붙여나가는 걸 추천해. 막히면 Claude에게 바로 물어봐.</p>
+
+<div class="ask-claude">
+막히는 부분이 있으면 언제든 Claude에게 질문해. 이 레슨의 담당 교사는 Claude다.
+</div>
+
+<div class="next">
+이전: <a href="./0005-list-search-delete.html">레슨 5 — 검색/삭제</a> · 참고: <a href="../reference/glossary.html">용어 사전</a>
+</div>
+
+<script>
+document.querySelectorAll('.quiz .q').forEach(q => {
+  const buttons = [];
+  let el = q.nextElementSibling;
+  while (el && el.classList.contains('choice')) {
+    buttons.push(el);
+    el = el.nextElementSibling;
+  }
+  const feedback = el;
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const correct = btn.dataset.correct === 'true';
+      buttons.forEach(b => b.classList.remove('correct', 'wrong'));
+      btn.classList.add(correct ? 'correct' : 'wrong');
+      feedback.textContent = correct ? '맞았어.' : '다시 생각해봐.';
+      feedback.style.color = correct ? 'var(--ok)' : 'var(--bad)';
+    });
+  });
+});
+</script>
+
+</body>
+</html>

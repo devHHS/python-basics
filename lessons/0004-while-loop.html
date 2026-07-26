@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>레슨 4 — 입력받을 때까지 계속 물어보기 (while)</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="kicker">Lesson 0004 · Python 기초</div>
+<h1>입력받을 때까지 계속 물어보기 — while문</h1>
+
+<p>
+레슨 3에서 만든 검증은 "한 번 검사하고 끝"이었어. 제목이 비어있으면 저장만 안 할 뿐,
+사용자에게 다시 입력할 기회를 안 줬지. 이번엔 <strong>제대로 입력할 때까지 같은 질문을 반복</strong>하는 법을 배운다.
+</p>
+
+<div class="note">
+<strong>왜 필요할까?</strong> <code>for</code>문은 "정해진 개수만큼" 반복했지만, <code>while</code>문은
+"조건이 참인 동안" 반복한다 — 몇 번 반복될지 미리 알 수 없을 때 쓴다. 사용자 입력을 받는 대부분의 실제 프로그램이
+이 패턴을 쓴다.
+</div>
+
+<h2>핵심 문법</h2>
+<pre><code>title = input("제목이 뭔가요: ").strip()
+while title == "":
+    print("제목을 입력해야 해요")
+    title = input("제목이 뭔가요: ").strip()</code></pre>
+<p>
+동작 순서: 먼저 <code>title</code>을 한 번 입력받는다. 그다음 <code>while title == "":</code> 조건을 확인해서,
+참(비어있음)이면 블록 안을 실행하고 <strong>다시 조건을 확인</strong>한다 — 거짓(뭔가 입력됨)이 될 때까지 이 과정을 반복한다.
+</p>
+<div class="note">
+<strong>주의</strong>: 블록 안에서 <code>title</code>을 다시 <code>input()</code>으로 갱신하는 걸 잊으면,
+조건이 영원히 참으로 남아 프로그램이 멈추지 않는다 (무한 루프). <code>while</code>을 쓸 때는 항상
+"이 조건이 언젠가 거짓이 될 수 있는가"를 확인하는 습관을 들이자.
+</div>
+
+<div class="source">
+<span class="label">Primary source</span>
+<a href="https://docs.python.org/3/reference/compound_stmts.html#the-while-statement" target="_blank" rel="noopener">
+Python 공식 문서 — The while statement</a>
+— while문의 공식 정의. 문법 자체는 짧으니 위 예제와 비교하며 훑어보면 충분하다.
+</div>
+
+<h2>확인 퀴즈</h2>
+<div class="quiz" id="quiz">
+
+  <div class="q">1. "조건이 참인 동안" 반복하는 키워드는?</div>
+  <button class="choice" data-correct="false">until</button>
+  <button class="choice" data-correct="true">while</button>
+  <button class="choice" data-correct="false">loopy</button>
+  <div class="feedback"></div>
+
+  <div class="q" style="margin-top:1.2rem">2. while 블록 안에서 조건에 쓰인 변수를 갱신하지 않으면 생기는 문제는?</div>
+  <button class="choice" data-correct="false">문법 에러</button>
+  <button class="choice" data-correct="true">무한 루프</button>
+  <button class="choice" data-correct="false">즉시 종료</button>
+  <div class="feedback"></div>
+
+</div>
+
+<h2>직접 해보기</h2>
+<p><code>notes_app.py</code>를 열어서 레슨 3의 <code>if</code>/<code>else</code> 검증을 <code>while</code>로 바꿔봐:</p>
+<ol>
+<li><code>title</code>을 받은 뒤, 비어있는 동안 계속 다시 물어보는 <code>while</code>을 추가한다</li>
+<li><code>content</code>도 똑같이 만든다</li>
+<li>이제 이 시점엔 둘 다 비어있지 않다는 게 보장되니, <code>if</code>/<code>else</code> 없이 바로 <code>add_note</code>를 호출해도 된다</li>
+<li>일부러 제목을 몇 번 빈 칸으로 입력해보고, 계속 물어보다가 뭔가 입력하면 넘어가는지 확인한다</li>
+</ol>
+<p class="note">막히면, 특히 무한 루프에 빠지면(Ctrl+C로 강제 종료 가능) Claude에게 바로 물어봐.</p>
+
+<div class="ask-claude">
+막히는 부분이 있으면 언제든 Claude에게 질문해. 이 레슨의 담당 교사는 Claude다.
+</div>
+
+<div class="next">
+이전: <a href="./0003-if-validation.html">레슨 3 — if문</a> · 참고: <a href="../reference/glossary.html">용어 사전</a>
+</div>
+
+<script>
+document.querySelectorAll('.quiz .q').forEach(q => {
+  const buttons = [];
+  let el = q.nextElementSibling;
+  while (el && el.classList.contains('choice')) {
+    buttons.push(el);
+    el = el.nextElementSibling;
+  }
+  const feedback = el;
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const correct = btn.dataset.correct === 'true';
+      buttons.forEach(b => b.classList.remove('correct', 'wrong'));
+      btn.classList.add(correct ? 'correct' : 'wrong');
+      feedback.textContent = correct ? '맞았어.' : '다시 생각해봐.';
+      feedback.style.color = correct ? 'var(--ok)' : 'var(--bad)';
+    });
+  });
+});
+</script>
+
+</body>
+</html>
