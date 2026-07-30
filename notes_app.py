@@ -25,7 +25,7 @@ def delete_note(notes, title):
         if n["title"] == title:
             del notes[i]
             return notes
-    return notes
+    return None
 
 # 함수는 매개변수 없이도 만들 수 있다. 이 함수는 밖에서 값을 받을 필요 없이,
 # 스스로 input()을 받아서 그 결과를 return으로 밖에 돌려주기만 한다.
@@ -85,11 +85,19 @@ while True:
 
     elif choice == "2":
         title = search_title()
-        print(find_note(f"{notes}, {title}을 성공적으로 찾았습니다"))
+        found = find_note(notes, title)
+        if found is None:
+            print(f"{title} is not found")
+        else:
+            print(f"{title} is found")
 
     elif choice == "3":
         title = search_title()
-        print(delete_note(f"{notes}, {title}을 성공적으로 삭제했습니다"))
+        found = delete_note(notes, title)
+        if found is None:
+            print(f"{title} is not found")
+        else:
+            print(f"{title} is deleted")
 
     elif choice == "4":
         break

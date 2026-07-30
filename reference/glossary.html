@@ -104,5 +104,15 @@ def delete_note(notes, title):
     else:
         print("잘못된 선택이에요")</code></pre>
 
+<h2>None / is None</h2>
+<p><code>None</code>은 "값이 없다"를 나타내는 특별한 값. 함수에서 <code>return</code>을 안 만나고 끝까지 실행되면
+자동으로 <code>None</code>을 돌려준다. 어떤 값이 <code>None</code>인지 확인할 때는 <code>==</code> 대신
+<code>is</code>를 쓰는 게 관례다. <a href="../lessons/0007-none-check.html">레슨 7</a> 참고.</p>
+<pre><code>found = find_note(notes, title)
+if found is None:
+    print("찾지 못했습니다")
+else:
+    print(f"찾았습니다: {found}")</code></pre>
+
 </body>
 </html>
