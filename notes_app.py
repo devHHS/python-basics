@@ -18,6 +18,21 @@ def find_note(notes, title):
             return n
     return None
 
+def find_all_by_title(notes, title):
+    found_notes = []
+    for n in notes:
+        if n["title"] == title:
+            found_notes.append(n)
+    return found_notes
+
+def update_note(notes, title, new_content):
+    n = find_note(notes, title)
+    if n is None:
+        return None
+    else:    
+        n["content"] = new_content
+        return n
+
 # enumerate(): 리스트를 순회하며 인덱스(i)와 원소(n)를 같이 얻는다.
 # del notes[i]로 그 인덱스의 원소를 지운다.
 def delete_note(notes, title):
@@ -30,7 +45,7 @@ def delete_note(notes, title):
 # 함수는 매개변수 없이도 만들 수 있다. 이 함수는 밖에서 값을 받을 필요 없이,
 # 스스로 input()을 받아서 그 결과를 return으로 밖에 돌려주기만 한다.
 def search_title():
-    return input("찾을 제목: ").strip()
+    return input("Title to search: ").strip()
 
 
 # json.dump(note, f) / json.load(f): 딕셔너리 하나를 파일에 저장하고 다시 불러오는 방법.
@@ -70,36 +85,68 @@ except FileNotFoundError:
 
 # while True + break + if/elif: "4. 종료"를 고를 때까지 계속 메뉴를 보여준다.
 while True:
-    choice = input("1.추가 2.찾기 3.삭제 4.종료: ").strip()
+    choice = input("1. Add 2. Find 3. Delete 4. Update 5. Quit: ").strip()
     if choice == "1":
         # while문: 값이 입력될 때까지 계속 다시 물어본다 (빈 문자열은 거짓으로 취급됨).
-        title = input("제목이 뭔가요: ").strip()
+        title = input("Title: ").strip()
         while title == "":
-            print("제목을 입력하세요")
-            title = input("제목이 뭔가요: ").strip()
-        content = input("내용을 작성해주세요: ").strip()
+            print("Please enter a title.")
+            title = input("Title: ").strip()
+        content = input("Content: ").strip()
         while content == "":
-            print("내용을 입력하세요")
-            content = input("내용을 작성해주세요: ").strip()
+            print("Please enter some content.")
+            content = input("Content: ").strip()
         add_note(notes, title, content)
 
     elif choice == "2":
         title = search_title()
-        found = find_note(notes, title)
-        if found is None:
-            print(f"{title} is not found")
+        found_notes = find_all_by_title(notes, title)
+        if not found_notes:
+            print(f"{title} was not found.")
         else:
-            print(f"{title} is found")
+            for i, n in enumerate(found_notes):
+                print(f"{i}: title={title}, content={n['content']}")
 
     elif choice == "3":
-        title = search_title()
-        found = delete_note(notes, title)
-        if found is None:
-            print(f"{title} is not found")
-        else:
-            print(f"{title} is deleted")
+        choice_2 = input("1. Delete one 2. Delete all with this title 3. Delete everything: ").strip()
+        if choice_2 == "1":
+            title = search_title()
+            found_notes = find_all_by_title(notes, title)
+            if not found_notes:
+                print(f"{title} was not found.")
+            else:
+                for i, n in enumerate(found_notes):
+                    print(f"{i}: title={title}, content={n['content']}")
+                index_number = int(input("Which number? ").strip())
+                chosen = found_notes[index_number]
+                notes.remove(chosen)
+                print(f"title={title}, content={chosen['content']} was deleted.")
+
+        elif choice_2 == "2":
+            title = search_title()
+            found_notes = find_all_by_title(notes, title)
+            if not found_notes:
+                print(f"{title} was not found.")
+            else:
+                for n in found_notes:
+                    notes.remove(n)
+                print(f"All notes titled {title} were deleted.")
+
+        elif choice_2 == "3":
+            notes.clear()
+            print("All notes were deleted.")
 
     elif choice == "4":
+        title = search_title()
+        found_notes = find_note(notes, title)
+        if found_notes is None:
+            print(f"{title} was not found.")
+        else:
+            new_content = input("Content: ").strip()
+            update = update_note(notes, title, new_content)
+            print(f"{title} was updated.")
+
+    elif choice == "5":
         break
 
 # 예전에 함수 동작을 하나씩 확인해보던 테스트 코드 (레슨 5). 지금은 메뉴로 대체됐다.

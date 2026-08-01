@@ -1,3 +1,5 @@
 .claude/
 note.json
 notes.json
+.DS_Store
+__pycache__/

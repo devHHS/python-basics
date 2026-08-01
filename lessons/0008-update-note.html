@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>레슨 8 — 노트 수정하기 (딕셔너리 값 바꾸기)</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="kicker">Lesson 0008 · Python 기초</div>
+<h1>노트 수정하기 — 찾은 딕셔너리를 직접 바꾸기</h1>
+
+<p>
+지금까지 노트를 추가(1)하고, 찾고(2), 지울(3) 수 있어. 그런데 제목은 맞는데 내용에 오타가 있으면?
+지금은 지우고 다시 추가하는 수밖에 없어. 이번 레슨에서 "4. 수정"을 메뉴에 추가해서, 노트를 찾은 다음
+그 내용만 바꾸는 방법을 배운다.
+</p>
+
+<div class="note">
+<strong>왜 필요할까?</strong> 지우고 다시 만드는 것과 "있는 걸 그대로 두고 일부만 바꾸는 것"은 다른 동작이야.
+나중에 <code>ai-dev-team</code>에서 에이전트가 "기존 작업 결과를 갱신"해야 할 때(전체를 새로 만들지 않고)
+바로 이 패턴을 쓰게 된다.
+</div>
+
+<h2>핵심 개념 — find_note로 찾은 건 "복사본"이 아니다</h2>
+<p>
+<code>find_note</code>가 뭘 돌려주는지 다시 보자:
+</p>
+<pre><code>def find_note(notes, title):
+    for n in notes:
+        if n["title"] == title:
+            return n
+    return None</code></pre>
+<p>
+여기서 <code>n</code>은 <code>notes</code> 리스트 <strong>안에 있는 바로 그 딕셔너리</strong>야. 복사본이 아니야.
+그래서 <code>n</code>을 바꾸면 <code>notes</code> 리스트 안의 원본도 같이 바뀐다:
+</p>
+<pre><code>n = find_note(notes, "장보기")
+n["content"] = "우유, 계란"
+print(notes)  # notes 안의 "장보기" 노트도 이미 바뀌어 있다</code></pre>
+<p class="note">
+왜 이렇게 될까? 딕셔너리는 변수에 "값 자체"가 아니라 "어디 있는지 가리키는 것"이 담긴다. <code>n</code>과
+<code>notes</code> 리스트 속 그 자리는 <strong>같은 딕셔너리를 가리키고 있어서</strong>, 어느 쪽으로 접근해도
+결국 같은 물건을 만지는 거야. 이런 성질을 흔히 "mutable(변경 가능)"이라고 부른다.
+</p>
+
+<div class="source">
+<span class="label">Primary source</span>
+<a href="https://docs.python.org/3/tutorial/datastructures.html#dictionaries" target="_blank" rel="noopener">
+Python 공식 튜토리얼 — Dictionaries</a>
+— 딕셔너리가 키로 값을 저장하고 바꾸는 기본 동작을 확인해봐.
+</div>
+
+<div class="quiz" id="quiz">
+<h3>확인 퀴즈</h3>
+
+<div class="q">1. find_note(notes, title)이 돌려주는 n은 무엇일까?</div>
+<button class="choice" data-correct="false">notes 안 딕셔너리의 복사본</button>
+<button class="choice" data-correct="true">notes 안에 있는 바로 그 딕셔너리</button>
+<button class="choice" data-correct="false">title 문자열 자체</button>
+<div class="feedback"></div>
+
+<div class="q" style="margin-top:1.2rem">2. 찾은 노트 n의 내용을 새 값으로 바꾸는 코드는?</div>
+<button class="choice" data-correct="false">n.content = new_content</button>
+<button class="choice" data-correct="true">n["content"] = new_content</button>
+<button class="choice" data-correct="false">notes["content"] = new_content</button>
+<div class="feedback"></div>
+
+<div class="q" style="margin-top:1.2rem">3. update_note가 제목을 못 찾았을 때 뭘 리턴해야 delete_note에서 있었던 버그를 반복하지 않을까?</div>
+<button class="choice" data-correct="false">notes 그대로</button>
+<button class="choice" data-correct="true">None</button>
+<button class="choice" data-correct="false">빈 문자열 ""</button>
+<div class="feedback"></div>
+
+</div>
+
+<h2>직접 해보기</h2>
+<p><code>notes_app.py</code>에 "4. 수정"을 추가해보자:</p>
+<ol>
+<li><code>find_note</code> 아래에 <code>update_note(notes, title, new_content)</code> 함수를 만든다</li>
+<li>안에서 <code>find_note(notes, title)</code>로 노트를 찾아 변수(예: <code>n</code>)에 담는다</li>
+<li><code>n is None</code>이면 그대로 <code>None</code>을 리턴한다 (레슨 8 이전에 고친 delete_note 버그를 다시 만들지 않도록)</li>
+<li>찾았으면 <code>n["content"] = new_content</code>로 바꾸고, <code>n</code>을 리턴한다</li>
+<li>메뉴 문자열과 <code>elif</code> 사슬에 "4. 수정"을 끼워 넣는다 — 기존 "4. 종료"는 "5. 종료"로 밀어야 한다</li>
+<li><code>choice == "4"</code> 블록에서 <code>title</code>과 새 내용을 <code>input()</code>으로 받고, <code>update_note</code>를 호출한 뒤
+결과가 <code>None</code>인지 확인해서 "찾지 못했습니다" 또는 "수정했습니다" 메시지를 찍는다</li>
+</ol>
+<p class="note">
+힌트: 찾기나 삭제에서 썼던 <code>found = ...</code> / <code>if found is None:</code> 패턴을
+그대로 재사용하면 된다. 함수 이름과 안에서 하는 일만 다르다.
+</p>
+
+<div class="ask-claude">
+막히는 부분이 있으면 언제든 Claude에게 질문해. 이 레슨의 담당 교사는 Claude다.
+</div>
+
+<div class="next">
+이전: <a href="./0007-none-check.html">레슨 7 — None 확인하기</a> · 참고: <a href="../reference/glossary.html">용어 사전</a>
+</div>
+
+<script>
+document.querySelectorAll('.quiz .q').forEach(q => {
+  const buttons = [];
+  let el = q.nextElementSibling;
+  while (el && el.classList.contains('choice')) {
+    buttons.push(el);
+    el = el.nextElementSibling;
+  }
+  const feedback = el;
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const correct = btn.dataset.correct === 'true';
+      buttons.forEach(b => b.classList.remove('correct', 'wrong'));
+      btn.classList.add(correct ? 'correct' : 'wrong');
+      feedback.textContent = correct ? '맞았어.' : '다시 생각해봐.';
+      feedback.style.color = correct ? 'var(--ok)' : 'var(--bad)';
+    });
+  });
+});
+</script>
+
+</body>
+</html>
