@@ -155,5 +155,16 @@ add_note(title, content, content)  # notes 자리에 title이 들어가버림 (�
 notes.remove(chosen)         # notes 안에서 그 딕셔너리를 찾아 지운다
 notes.clear()                # notes를 통째로 비운다</code></pre>
 
+<h2>모듈(module) / import</h2>
+<p><code>.py</code> 파일 하나가 곧 모듈이다. <code>from 모듈 import 함수1, 함수2</code>는 함수 이름만 콕 집어서
+가져오고, <code>import 모듈</code>은 모듈 전체를 가져와 <code>모듈.함수()</code>로 부른다.
+<a href="../lessons/0009-modules-and-import.html">레슨 9</a> 참고.</p>
+<pre><code>from notes import add_note, find_note   # add_note(...) 로 바로 호출
+
+import notes                            # notes.add_note(...) 로 호출</code></pre>
+<p class="note">주의: 모듈 이름과 변수 이름이 같으면(<code>import notes</code> 후 <code>notes = []</code>처럼),
+변수 대입이 모듈 이름을 덮어써서 <code>AttributeError: 'list' object has no attribute '...'</code>가 난다.
+이럴 땐 <code>from</code>으로 필요한 이름만 가져오면 충돌이 안 생긴다.</p>
+
 </body>
 </html>

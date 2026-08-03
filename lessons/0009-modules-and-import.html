@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>레슨 9 — 여러 파일로 나누기 (import)</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="kicker">Lesson 0009 · Python 기초</div>
+<h1>코드를 여러 파일로 나누기 — import</h1>
+
+<p>
+지금 <code>notes_app.py</code> 하나에 함수(add_note, find_note, find_all_by_title, update_note, delete_note)와
+메뉴 루프, 파일 저장 코드가 전부 들어있어. 파일 하나가 점점 길어지고 있지. 이번 레슨에서는 "노트 관련 함수들"만
+따로 파일로 빼고, <code>notes_app.py</code>에서는 그 파일을 <strong>가져다 쓰기만</strong> 하는 법을 배운다.
+</p>
+
+<div class="note">
+<strong>왜 필요할까?</strong> <code>ai-dev-team</code>에서는 에이전트마다 자기 파일이 있고, 서로 필요한 걸
+import해서 쓴다. "함수는 한 파일에, 그 함수를 쓰는 코드는 다른 파일에" 나누는 감각이 그 구조를 이해하는 첫걸음이다.
+</div>
+
+<h2>핵심 개념 — 모듈(module)과 import</h2>
+<p>
+파이썬에서는 <code>.py</code> 파일 하나가 곧 <strong>모듈(module)</strong>이야. 다른 파일에 있는 함수를 쓰고 싶으면
+<code>import</code>로 그 파일(모듈)을 가져오면 된다. 방법은 두 가지야:
+</p>
+<pre><code># 방법 1: 필요한 함수만 이름으로 콕 집어서 가져오기
+from notes import add_note, find_note
+
+add_note(notes, title, content)   # 바로 이름으로 부른다
+
+# 방법 2: 파일(모듈) 전체를 가져와서, 그 안의 함수를 "모듈이름.함수이름"으로 부르기
+import notes
+
+notes.add_note(notes_list, title, content)   # notes. 을 붙여서 부른다</code></pre>
+<p>
+파일 이름이 곧 모듈 이름이 된다 — <code>notes.py</code>를 가져올 땐 <code>.py</code> 없이 <code>notes</code>라고만 쓴다.
+</p>
+<p class="note">
+주의: 이번 레슨에서 모듈 이름은 <code>notes</code>인데, 우리 코드에는 노트 리스트를 담는 변수도 <code>notes</code>야.
+이름이 겹쳐도 파이썬은 헷갈리지 않지만(모듈과 변수는 다른 이름 공간에 있음), 사람이 읽을 땐 헷갈릴 수 있다는 걸
+기억해두자. 그래서 이번 레슨에서는 "방법 1"(필요한 함수만 이름으로 가져오기)을 쓸 거야 — 지금 코드를 거의 그대로
+두고 맨 위에 한 줄만 추가하면 되기 때문이다.
+</p>
+
+<div class="source">
+<span class="label">Primary source</span>
+<a href="https://docs.python.org/3/tutorial/modules.html" target="_blank" rel="noopener">
+Python 공식 튜토리얼 — Modules</a>
+— 모듈이 무엇이고 import가 실제로 무슨 일을 하는지 확인해봐.
+</div>
+
+<div class="quiz" id="quiz">
+<h3>확인 퀴즈</h3>
+
+<div class="q">1. notes.py에 있는 add_note를 notes_app.py에서 쓰려면?</div>
+<button class="choice" data-correct="false">코드를 복사해서 붙여넣는다</button>
+<button class="choice" data-correct="true">import로 notes.py를 가져온다</button>
+<button class="choice" data-correct="false">notes.py를 따로 실행해서 저장한다</button>
+<div class="feedback"></div>
+
+<div class="q" style="margin-top:1.2rem">2. from notes import add_note 라고 썼을 때, add_note를 부르는 방법은?</div>
+<button class="choice" data-correct="false">notes.add_note(...)</button>
+<button class="choice" data-correct="true">add_note(...)</button>
+<button class="choice" data-correct="false">import.add_note(...)</button>
+<div class="feedback"></div>
+
+<div class="q" style="margin-top:1.2rem">3. import notes 라고만 썼을 때(from 없이), add_note를 부르는 방법은?</div>
+<button class="choice" data-correct="false">add_note(...)</button>
+<button class="choice" data-correct="true">notes.add_note(...)</button>
+<button class="choice" data-correct="false">notes_app.add_note(...)</button>
+<div class="feedback"></div>
+
+</div>
+
+<h2>직접 해보기</h2>
+<p>노트 관련 함수들을 <code>notes.py</code>라는 새 파일로 옮겨보자 (프로젝트 폴더에, <code>notes_app.py</code>와 같은 위치):</p>
+<ol>
+<li>새 파일 <code>notes.py</code>를 만든다</li>
+<li><code>notes_app.py</code>에서 <code>add_note</code>, <code>find_note</code>, <code>find_all_by_title</code>,
+<code>update_note</code>, <code>delete_note</code>, <code>search_title</code> 함수 정의를 전부 잘라내서
+<code>notes.py</code>로 옮긴다 (함수 위 한국어 주석도 같이 옮기면 좋다)</li>
+<li><code>notes_app.py</code> 맨 위, <code>import json</code> 아래에
+<code>from notes import add_note, find_note, find_all_by_title, update_note, delete_note, search_title</code>를 추가한다</li>
+<li>실행해서(<code>python3 notes_app.py</code>) 이전과 똑같이 작동하는지 확인한다 — 추가/찾기/삭제/수정 다 테스트</li>
+</ol>
+<p class="note">
+힌트: 옮기다가 <code>NameError: name 'add_note' is not defined</code> 같은 에러가 나면, import 줄을 빼먹었거나
+함수 이름을 잘못 옮겨적었을 확률이 높다. 에러 메시지의 함수 이름을 그대로 검색해서 어디서 안 보이는지 찾아보자.
+</p>
+
+<div class="ask-claude">
+막히는 부분이 있으면 언제든 Claude에게 질문해. 이 레슨의 담당 교사는 Claude다.
+</div>
+
+<div class="next">
+이전: <a href="./0008-update-note.html">레슨 8 — 노트 수정하기</a> · 참고: <a href="../reference/glossary.html">용어 사전</a>
+</div>
+
+<script>
+document.querySelectorAll('.quiz .q').forEach(q => {
+  const buttons = [];
+  let el = q.nextElementSibling;
+  while (el && el.classList.contains('choice')) {
+    buttons.push(el);
+    el = el.nextElementSibling;
+  }
+  const feedback = el;
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const correct = btn.dataset.correct === 'true';
+      buttons.forEach(b => b.classList.remove('correct', 'wrong'));
+      btn.classList.add(correct ? 'correct' : 'wrong');
+      feedback.textContent = correct ? '맞았어.' : '다시 생각해봐.';
+      feedback.style.color = correct ? 'var(--ok)' : 'var(--bad)';
+    });
+  });
+});
+</script>
+
+</body>
+</html>
