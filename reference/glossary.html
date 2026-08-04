@@ -166,5 +166,18 @@ import notes                            # notes.add_note(...) 로 호출</code><
 변수 대입이 모듈 이름을 덮어써서 <code>AttributeError: 'list' object has no attribute '...'</code>가 난다.
 이럴 땐 <code>from</code>으로 필요한 이름만 가져오면 충돌이 안 생긴다.</p>
 
+<h2>클래스 (class) / __init__ / self</h2>
+<p><code>class</code>는 "정해진 모양의 데이터"를 만드는 설계도다. <code>__init__</code>은 인스턴스를 만들 때
+자동 실행되는 초기화 함수(관례상 생성자라고도 부름)이고, <code>self</code>는 그 안에서 "지금 만들어지는 바로 이
+인스턴스"를 가리킨다. 딕셔너리와 달리 속성은 점 표기법으로 접근한다. <a href="../lessons/0010-classes.html">레슨 10</a> 참고.</p>
+<pre><code>class Note:
+    def __init__(self, title, content):
+        self.title = title
+        self.content = content
+
+n = Note("장보기", "우유, 계란")
+n.title            # "장보기" (딕셔너리처럼 n["title"]이 아니라 점 표기법)
+n.content = "새 내용"  # 속성도 mutable — 나중에 다시 대입해서 바꿀 수 있다</code></pre>
+
 </body>
 </html>

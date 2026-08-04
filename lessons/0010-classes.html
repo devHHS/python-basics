@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>레슨 10 — 클래스로 노트 표현하기</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="kicker">Lesson 0010 · Python 기초</div>
+<h1>클래스 — 딕셔너리 대신 "정해진 모양"으로 데이터 묶기</h1>
+
+<p>
+지금까지 노트를 <code>{"title": title, "content": content}</code> 딕셔너리로 표현했어. 잘 작동했지만 문제가
+하나 있다 — 딕셔너리는 아무 키나 넣을 수 있어서, 실수로 <code>note["titel"]</code>처럼 오타를 내도
+파이썬은 에러를 내지 않고 그냥 새 키를 만들어버린다. <strong>클래스(class)</strong>는 "이 데이터는 항상 이런
+모양이다"를 미리 정해두는 방법이다.
+</p>
+
+<div class="note">
+<strong>왜 필요할까?</strong> <code>ai-dev-team</code>에서 쓸 Pydantic이라는 도구는 클래스를 기반으로
+"이 데이터는 반드시 이런 필드를 가져야 한다"를 강제한다. 클래스 문법에 먼저 익숙해지는 게 그걸 이해하는
+가장 빠른 길이다.
+</div>
+
+<h2>핵심 개념 — class, __init__, self</h2>
+<p>
+클래스는 "이런 모양의 물건을 만드는 설계도"야. <code>Note</code>라는 설계도를 만들어보자:
+</p>
+<pre><code>class Note:
+    def __init__(self, title, content):
+        self.title = title
+        self.content = content</code></pre>
+<p>
+하나씩 뜯어보면:
+</p>
+<ul>
+<li><code>class Note:</code> — "Note"라는 이름의 새 설계도를 만든다.</li>
+<li><code>def __init__(self, title, content):</code> — 이 설계도로 물건(인스턴스)을 만들 때 자동으로 실행되는
+함수다. 이름이 정해져 있다(<code>__init__</code>, 앞뒤로 언더스코어 2개씩).</li>
+<li><code>self</code> — "지금 만들어지고 있는 바로 이 물건"을 가리킨다. 함수를 부를 때 직접 넘기지 않아도
+파이썬이 자동으로 채워준다.</li>
+<li><code>self.title = title</code> — 넘겨받은 <code>title</code> 값을, 지금 만들어지는 이 물건의
+<code>title</code>이라는 자리에 저장한다.</li>
+</ul>
+<p>이제 이 설계도로 실제 노트를 만들어보자:</p>
+<pre><code>n = Note("장보기", "우유, 계란")
+n.title    # "장보기"
+n.content  # "우유, 계란"</code></pre>
+<p class="note">
+딕셔너리는 <code>n["title"]</code>처럼 대괄호로 접근했지만, 클래스로 만든 물건은 <code>n.title</code>처럼
+점(.)으로 접근한다. 이미 <code>notes.add_note(...)</code>에서 점 표기법을 써봤지? 그거랑 똑같은 문법이다 —
+모듈의 함수를 부르는 것도, 인스턴스의 속성에 접근하는 것도 "점 뒤에 원하는 이름"이라는 같은 규칙을 쓴다.
+</p>
+
+<div class="source">
+<span class="label">Primary source</span>
+<a href="https://docs.python.org/3/tutorial/classes.html#a-first-look-at-classes" target="_blank" rel="noopener">
+Python 공식 튜토리얼 — A First Look at Classes</a>
+— 클래스, 인스턴스, <code>__init__</code>의 공식 설명을 확인해봐.
+</div>
+
+<div class="quiz" id="quiz">
+<h3>확인 퀴즈</h3>
+
+<div class="q">1. Note("장보기", "우유")를 실행하면 자동으로 호출되는 함수는?</div>
+<button class="choice" data-correct="false">self</button>
+<button class="choice" data-correct="true">__init__</button>
+<button class="choice" data-correct="false">Note.new</button>
+<div class="feedback"></div>
+
+<div class="q" style="margin-top:1.2rem">2. self가 가리키는 것은?</div>
+<button class="choice" data-correct="false">클래스 이름 자체</button>
+<button class="choice" data-correct="true">지금 만들어지는 바로 그 인스턴스</button>
+<button class="choice" data-correct="false">첫 번째 매개변수의 값</button>
+<div class="feedback"></div>
+
+<div class="q" style="margin-top:1.2rem">3. n = Note("장보기", "우유") 다음, 제목을 읽는 문법은?</div>
+<button class="choice" data-correct="false">n["title"]</button>
+<button class="choice" data-correct="true">n.title</button>
+<button class="choice" data-correct="false">Note.title(n)</button>
+<div class="feedback"></div>
+
+</div>
+
+<h2>직접 해보기</h2>
+<p>
+아직 <code>notes_app.py</code>는 건드리지 않는다 — 새 파일 <code>class_practice.py</code>에서 클래스
+문법에만 먼저 익숙해지자:
+</p>
+<ol>
+<li><code>Note</code> 클래스를 만든다 (<code>title</code>, <code>content</code> 두 속성)</li>
+<li><code>Note</code> 인스턴스를 두 개 만든다 (예: 서로 다른 title/content로)</li>
+<li>각 인스턴스의 <code>title</code>, <code>content</code>를 <code>print()</code>로 출력해본다</li>
+<li>인스턴스 하나를 골라 <code>n.content = "새 내용"</code>처럼 속성을 바꿔보고, 다시 출력해서 실제로 바뀌었는지 확인한다</li>
+</ol>
+<p class="note">
+힌트: 4번은 레슨 8에서 배운 "mutable 값 수정"과 같은 감각이야 — 딕셔너리 키를 바꿨던 것처럼, 이번엔 점 표기법으로
+속성을 바꾼다.
+</p>
+
+<div class="ask-claude">
+막히는 부분이 있으면 언제든 Claude에게 질문해. 이 레슨의 담당 교사는 Claude다.
+</div>
+
+<div class="next">
+이전: <a href="./0009-modules-and-import.html">레슨 9 — 여러 파일로 나누기</a> · 참고: <a href="../reference/glossary.html">용어 사전</a>
+</div>
+
+<script>
+document.querySelectorAll('.quiz .q').forEach(q => {
+  const buttons = [];
+  let el = q.nextElementSibling;
+  while (el && el.classList.contains('choice')) {
+    buttons.push(el);
+    el = el.nextElementSibling;
+  }
+  const feedback = el;
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const correct = btn.dataset.correct === 'true';
+      buttons.forEach(b => b.classList.remove('correct', 'wrong'));
+      btn.classList.add(correct ? 'correct' : 'wrong');
+      feedback.textContent = correct ? '맞았어.' : '다시 생각해봐.';
+      feedback.style.color = correct ? 'var(--ok)' : 'var(--bad)';
+    });
+  });
+});
+</script>
+
+</body>
+</html>
