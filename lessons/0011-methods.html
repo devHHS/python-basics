@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>레슨 11 — 클래스에 메서드 추가하기</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="kicker">Lesson 0011 · Python 기초</div>
+<h1>메서드 — 클래스 안에 "동작"을 정의하기</h1>
+
+<p>
+레슨 10에서 만든 <code>Note</code>는 <code>title</code>, <code>content</code>라는 데이터만 가지고 있다.
+지금까지 뭔가 "하려면" <code>n.content[:10]</code>처럼 바깥에서 직접 다뤄야 했다. <strong>메서드(method)</strong>는
+그 동작을 클래스 안에 넣어서, 데이터와 그 데이터로 할 일을 한 군데 묶어두는 방법이다.
+</p>
+
+<div class="note">
+<strong>왜 필요할까?</strong> <code>ai-dev-team</code>에서 에이전트들이 주고받을 데이터 클래스(Pydantic 모델)도
+종종 자기 자신을 다루는 메서드를 가진다 — "이 상태가 유효한가?", "요약을 만들어줘" 같은 것. 메서드 문법에
+먼저 익숙해지면 그때 자연스럽게 읽힌다.
+</div>
+
+<h2>핵심 개념 — self가 있는 함수</h2>
+<p>
+메서드는 그냥 <strong>클래스 안에 정의된 함수</strong>다. <code>__init__</code>도 사실 메서드의 하나였다 —
+"인스턴스가 만들어질 때"라는 특별한 순간에 자동으로 불릴 뿐, 문법은 똑같다:
+</p>
+<pre><code>class Note:
+    def __init__(self, title, content):
+        self.title = title
+        self.content = content
+
+    def preview(self):
+        return self.title + ": " + self.content[:10]</code></pre>
+<p>
+뜯어보면:
+</p>
+<ul>
+<li><code>def preview(self):</code> — 클래스 안에서 정의했으니 메서드다. 첫 매개변수는 항상 <code>self</code>
+(관례적 이름일 뿐이지만 거의 모두가 이 이름을 쓴다).</li>
+<li><code>self.title</code>, <code>self.content</code> — <code>__init__</code>에서 저장해둔 이 인스턴스의
+값을 그대로 읽어온다.</li>
+<li>메서드도 함수니까 <code>return</code>으로 값을 돌려줄 수 있다.</li>
+</ul>
+<p>부를 때는 <code>__init__</code>과 마찬가지로 <code>self</code>를 직접 넘기지 않는다:</p>
+<pre><code>n = Note("장보기", "우유, 계란, 빵, 버터")
+n.preview()   # "장보기: 우유, 계란, 빵"</code></pre>
+<p class="note">
+<code>n.preview()</code>라고 쓰면 파이썬이 알아서 <code>Note.preview(n)</code>으로 바꿔 부른다 — 점 앞의
+<code>n</code>이 자동으로 <code>self</code> 자리에 들어간다. <code>__init__</code>이 <code>Note(...)</code>를
+부를 때 <code>self</code>를 안 넘겨도 됐던 것과 같은 규칙이다.
+</p>
+
+<p>
+매개변수를 더 받는 메서드도 만들 수 있다 — <code>self</code> 뒤에 추가하면 된다:
+</p>
+<pre><code>    def rename(self, new_title):
+        self.title = new_title</code></pre>
+<pre><code>n.rename("장보기 목록")   # self=n, new_title="장보기 목록"
+n.title                   # "장보기 목록"</code></pre>
+
+<div class="source">
+<span class="label">Primary source</span>
+<a href="https://docs.python.org/3/tutorial/classes.html#method-objects" target="_blank" rel="noopener">
+Python 공식 튜토리얼 — Method Objects</a>
+— 메서드가 실제로 어떻게 호출되는지 공식 설명을 확인해봐.
+</div>
+
+<div class="quiz" id="quiz">
+<h3>확인 퀴즈</h3>
+
+<div class="q">1. 클래스 안에서 정의한 함수를 부르는 이름은?</div>
+<button class="choice" data-correct="false">모듈</button>
+<button class="choice" data-correct="true">메서드</button>
+<button class="choice" data-correct="false">인스턴스</button>
+<div class="feedback"></div>
+
+<div class="q" style="margin-top:1.2rem">2. n.preview()를 실행하면 파이썬이 실제로 부르는 것은?</div>
+<button class="choice" data-correct="false">preview(n)</button>
+<button class="choice" data-correct="true">Note.preview(n)</button>
+<button class="choice" data-correct="false">Note.preview()</button>
+<div class="feedback"></div>
+
+<div class="q" style="margin-top:1.2rem">3. def rename(self, new_title): 를 n.rename("새 이름")으로 부르면, new_title에 들어가는 값은?</div>
+<button class="choice" data-correct="false">self</button>
+<button class="choice" data-correct="false">n</button>
+<button class="choice" data-correct="true">"새 이름"</button>
+<div class="feedback"></div>
+
+</div>
+
+<h2>직접 해보기</h2>
+<p>
+<code>class_practice.py</code>의 <code>Note</code> 클래스에 이어서 진행한다:
+</p>
+<ol>
+<li><code>preview(self)</code> 메서드를 추가한다 — <code>title</code>과 <code>content</code> 앞 10글자를
+합쳐서 <code>return</code>한다</li>
+<li><code>n1.preview()</code>, <code>n2.preview()</code>를 각각 <code>print()</code>로 출력해본다</li>
+<li><code>rename(self, new_title)</code> 메서드를 추가한다 — <code>self.title</code>을 <code>new_title</code>로
+바꾼다</li>
+<li><code>n1.rename("새 제목")</code>을 부르고, <code>n1.title</code>을 다시 출력해서 실제로 바뀌었는지 확인한다</li>
+</ol>
+<p class="note">
+힌트: 메서드는 <code>__init__</code>과 같은 들여쓰기 위치(클래스 블록 안, 나란히)에 정의해야 한다. 레슨 10에서
+겪었던 실수 — 인스턴스 생성 코드를 <code>__init__</code> 안에 잘못 넣었던 것 — 을 떠올리며 들여쓰기를 확인해봐.
+</p>
+
+<div class="ask-claude">
+막히는 부분이 있으면 언제든 Claude에게 질문해. 이 레슨의 담당 교사는 Claude다.
+</div>
+
+<div class="next">
+이전: <a href="./0010-classes.html">레슨 10 — 클래스로 노트 표현하기</a> · 참고: <a href="../reference/glossary.html">용어 사전</a>
+</div>
+
+<script>
+document.querySelectorAll('.quiz .q').forEach(q => {
+  const buttons = [];
+  let el = q.nextElementSibling;
+  while (el && el.classList.contains('choice')) {
+    buttons.push(el);
+    el = el.nextElementSibling;
+  }
+  const feedback = el;
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const correct = btn.dataset.correct === 'true';
+      buttons.forEach(b => b.classList.remove('correct', 'wrong'));
+      btn.classList.add(correct ? 'correct' : 'wrong');
+      feedback.textContent = correct ? '맞았어.' : '다시 생각해봐.';
+      feedback.style.color = correct ? 'var(--ok)' : 'var(--bad)';
+    });
+  });
+});
+</script>
+
+</body>
+</html>

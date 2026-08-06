@@ -179,5 +179,25 @@ n = Note("장보기", "우유, 계란")
 n.title            # "장보기" (딕셔너리처럼 n["title"]이 아니라 점 표기법)
 n.content = "새 내용"  # 속성도 mutable — 나중에 다시 대입해서 바꿀 수 있다</code></pre>
 
+<h2>메서드 (method)</h2>
+<p>클래스 안에 정의한 함수. 첫 매개변수는 항상 <code>self</code>이고, <code>n.메서드()</code>처럼 부르면 파이썬이
+자동으로 <code>self</code> 자리에 인스턴스를 채워 <code>클래스.메서드(n)</code>으로 실행한다. <code>self</code> 뒤에
+매개변수를 더 받을 수도 있다. <a href="../lessons/0011-methods.html">레슨 11</a> 참고.</p>
+<pre><code>class Note:
+    def __init__(self, title, content):
+        self.title = title
+        self.content = content
+
+    def preview(self):
+        return self.title + ": " + self.content[:10]
+
+    def rename(self, new_title):
+        self.title = new_title
+
+n = Note("장보기", "우유, 계란")
+n.preview()          # self=n 자동 전달 → "장보기: 우유, 계란"
+n.rename("새 제목")   # self=n, new_title="새 제목"
+n.title              # "새 제목"</code></pre>
+
 </body>
 </html>
