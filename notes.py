@@ -3,8 +3,16 @@
 # (그래서 호출되는 시점보다 앞에 정의되어 있어야 한다.)
 
 # 딕셔너리: {key: value}로 title/content를 하나의 note로 묶고, 리스트(notes)에 추가한다.
+def next_id(notes):
+    if not notes:
+        return 1
+    ids = []
+    for n in notes:
+        ids.append(n["id"])
+    return max(ids) + 1
+
 def add_note(notes, title, content):
-    note = {"title": title, "content": content}
+    note = {"title": title, "content": content, "id": next_id(notes)}
     notes.append(note)
     return notes
 

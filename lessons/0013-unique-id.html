@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>레슨 13 — 노트에 고유 ID 부여하기</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="kicker">Lesson 0013 · Python 기초</div>
+<h1>고유 ID — title 중복 문제를 근본적으로 해결하기</h1>
+
+<p>
+레슨 9~10 사이에 title이 같은 노트가 여러 개면 항상 헷갈린다는 걸 스스로 발견했었다. 그때는
+"찾은 걸 다 모아서 번호를 보여주고 고르게" 하는 방식(<code>find_all_by_title</code> + 리스트 인덱스)으로
+넘어갔는데, 이건 매번 검색 결과를 다시 번호 매기는 임시방편이다. <strong>진짜 해결책은 노트마다
+절대 바뀌지 않고 절대 겹치지 않는 값 — ID — 를 하나씩 붙여주는 것</strong>이다.
+</p>
+
+<div class="note">
+<strong>왜 필요할까?</strong> title은 사용자가 아무 때나 똑같이 입력할 수 있어서 식별자로 못 쓴다.
+ID는 "이 노트가 정확히 어떤 노트인지" 흔들림 없이 가리키는 값이다. 데이터베이스의 기본 키(primary key),
+그리고 나중에 Pydantic 모델에서 자주 보게 될 <code>id: int</code> 필드도 같은 개념이다.
+</div>
+
+<h2>핵심 개념 — 다음 ID를 스스로 계산하기</h2>
+<p>
+가장 간단한 방법은 <strong>"지금까지 나온 것 중 가장 큰 ID + 1"</strong>을 새 ID로 쓰는 것이다.
+<code>notes</code>가 비어있으면 1부터 시작한다. 이렇게 하면 중간에 노트를 지워도 ID가 절대
+겹치지 않는다 (반대로 <code>len(notes) + 1</code>을 쓰면, 지운 뒤 새로 추가할 때 이미 썼던 ID가
+재사용돼서 겹칠 수 있다 — 왜 그런지 직접 해보기에서 확인해보자).
+</p>
+<pre><code>def next_id(notes):
+    if not notes:
+        return 1
+    ids = []
+    for n in notes:
+        ids.append(n["id"])
+    return max(ids) + 1</code></pre>
+<p>
+이미 알고 있는 것만 썼다 — <code>for</code>로 순회하며 리스트에 모으고(레슨 10의
+<code>find_all_by_title</code>과 같은 패턴), 파이썬 내장 함수 <code>max()</code>로 가장 큰 값을 구한다.
+</p>
+
+<div class="source">
+<span class="label">Primary source</span>
+<a href="https://docs.python.org/3/library/functions.html#max" target="_blank" rel="noopener">
+Python 공식 문서 — max()</a>
+— 여러 값 중 가장 큰 값을 구하는 내장 함수의 정확한 동작을 확인해봐.
+</div>
+
+<div class="quiz" id="quiz">
+<h3>확인 퀴즈</h3>
+
+<div class="q">1. ID로 title 대신 써야 하는 이유는?</div>
+<button class="choice" data-correct="false">title이 항상 더 길기 때문에</button>
+<button class="choice" data-correct="true">title은 중복될 수 있기 때문에</button>
+<button class="choice" data-correct="false">ID가 저장 공간을 더 적게 쓰기 때문에</button>
+<div class="feedback"></div>
+
+<div class="q" style="margin-top:1.2rem">2. len(notes) + 1을 새 ID로 쓰면 안 되는 이유는?</div>
+<button class="choice" data-correct="false">계산 속도가 너무 느리기 때문에</button>
+<button class="choice" data-correct="true">삭제 후에는 이미 쓴 ID와 겹칠 수 있기 때문에</button>
+<button class="choice" data-correct="false">파이썬이 음수를 반환하기 때문에</button>
+<div class="feedback"></div>
+
+<div class="q" style="margin-top:1.2rem">3. notes가 빈 리스트일 때 next_id(notes)는 무엇을 반환해야 하나?</div>
+<button class="choice" data-correct="false">0</button>
+<button class="choice" data-correct="true">1</button>
+<button class="choice" data-correct="false">None</button>
+<div class="feedback"></div>
+
+</div>
+
+<h2>직접 해보기</h2>
+<p><code>notes.py</code>에서 진행한다:</p>
+<ol>
+<li><code>next_id(notes)</code> 함수를 추가한다 — 위 코드를 참고해서 직접 타이핑해본다</li>
+<li><code>add_note</code>를 수정해서, 새 노트를 만들 때 <code>"id": next_id(notes)</code>를 같이 넣는다</li>
+<li><code>notes_app.py</code>를 실행해서 노트를 두세 개 추가하고, <code>notes.json</code>을 열어 각 노트에
+서로 다른 <code>id</code>가 붙었는지 확인한다</li>
+<li>노트 하나를 삭제한 뒤 새 노트를 추가해본다 — 방금 지운 노트의 ID가 재사용되지 <em>않는지</em> 확인한다</li>
+<li>(선택, 시간이 남으면) <code>len(notes) + 1</code>로 바꿔서 같은 삭제→추가 테스트를 해보고, 왜 ID가
+겹치는지 직접 눈으로 확인한 뒤 다시 <code>max()</code> 버전으로 되돌린다</li>
+</ol>
+<p class="note">
+아직 <code>find</code>/<code>delete</code> 메뉴가 title 기준인 것은 그대로 둔다 — 오늘은 "ID를 만들어서
+붙이는 것"까지만. ID로 검색·삭제하도록 메뉴를 바꾸는 건 다음 세션 후보로 남겨두자.
+</p>
+
+<div class="ask-claude">
+막히는 부분이 있으면 언제든 Claude에게 질문해. 이 레슨의 담당 교사는 Claude다.
+</div>
+
+<div class="next">
+이전: <a href="./0012-venv-and-pip.html">레슨 12 — 가상환경과 pip</a> · 참고: <a href="../reference/glossary.html">용어 사전</a>
+</div>
+
+<script>
+document.querySelectorAll('.quiz .q').forEach(q => {
+  const buttons = [];
+  let el = q.nextElementSibling;
+  while (el && el.classList.contains('choice')) {
+    buttons.push(el);
+    el = el.nextElementSibling;
+  }
+  const feedback = el;
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const correct = btn.dataset.correct === 'true';
+      buttons.forEach(b => b.classList.remove('correct', 'wrong'));
+      btn.classList.add(correct ? 'correct' : 'wrong');
+      feedback.textContent = correct ? '맞았어.' : '다시 생각해봐.';
+      feedback.style.color = correct ? 'var(--ok)' : 'var(--bad)';
+    });
+  });
+});
+</script>
+
+</body>
+</html>
