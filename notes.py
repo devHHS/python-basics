@@ -16,10 +16,10 @@ def add_note(notes, title, content):
     notes.append(note)
     return notes
 
-# 리스트 순회 + 조건 검사: 제목이 같은 노트를 찾아서 돌려준다. 끝까지 못 찾으면 None.
-def find_note(notes, title):
+# 리스트 순회 + 조건 검사: id가 같은 노트를 찾아서 돌려준다. 끝까지 못 찾으면 None.
+def find_note_by_id(notes, id):
     for n in notes:
-        if n["title"] == title:
+        if n["id"] == id:
             return n
     return None
 
@@ -30,22 +30,16 @@ def find_all_by_title(notes, title):
             found_notes.append(n)
     return found_notes
 
-def update_note(notes, title, new_content):
-    n = find_note(notes, title)
+def find_all_notes(notes):
+    return notes
+
+def update_note(notes, id, new_content):
+    n = find_note_by_id(notes, id)
     if n is None:
         return None
     else:    
         n["content"] = new_content
         return n
-
-# enumerate(): 리스트를 순회하며 인덱스(i)와 원소(n)를 같이 얻는다.
-# del notes[i]로 그 인덱스의 원소를 지운다.
-def delete_note(notes, title):
-    for i, n in enumerate(notes):
-        if n["title"] == title:
-            del notes[i]
-            return notes
-    return None
 
 # 함수는 매개변수 없이도 만들 수 있다. 이 함수는 밖에서 값을 받을 필요 없이,
 # 스스로 input()을 받아서 그 결과를 return으로 밖에 돌려주기만 한다.
