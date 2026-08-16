@@ -199,5 +199,47 @@ n.preview()          # self=n 자동 전달 → "장보기: 우유, 계란"
 n.rename("새 제목")   # self=n, new_title="새 제목"
 n.title              # "새 제목"</code></pre>
 
+<h2>ValueError</h2>
+<p><code>int()</code>처럼 값을 변환하는 함수가, 타입은 맞지만 <strong>값 자체가 이상해서</strong> 변환에
+실패할 때 던지는 에러. 글자, 대문자/소문자, 특수문자, 빈칸, 빈 문자열 등 "숫자로 못 바꾸는" 모든 경우가
+전부 같은 <code>ValueError</code> 하나로 처리된다 — 원인별로 구분할 필요가 없다.
+<a href="../lessons/0015-valueerror-handling.html">레슨 15</a> 참고.</p>
+<pre><code>try:
+    id = int(input("ID: ").strip())
+except ValueError:
+    print("숫자를 입력하세요.")
+    continue</code></pre>
+
+<h2>continue</h2>
+<p>반복문(<code>while</code>/<code>for</code>) 안에서, 그 아래 남은 코드를 건너뛰고 반복문의 처음으로
+바로 돌아간다. <code>if</code> 몇 겹 안에 있든 상관없이, 자신을 감싸는 <strong>가장 가까운 반복문</strong>이
+기준이다 — 들여쓰기 깊이가 아니라 "어떤 반복문에 속하는지"로 정해진다.</p>
+
+<h2>pytest / assert</h2>
+<p>파이썬에서 유닛 테스트(unit test)를 짜고 실행하는 도구. <code>assert 조건</code>은 조건이 참이면
+아무 일도 없고, 거짓이면 <code>AssertionError</code>를 낸다. 파일 이름과 함수 이름이 모두
+<code>test_</code>로 시작하면 pytest가 자동으로 찾아 실행한다. <a href="../lessons/0016-pytest-basics.html">레슨 16</a> 참고.</p>
+<pre><code># test_notes.py
+from notes import next_id
+
+def test_next_id_empty_list():
+    assert next_id([]) == 1</code></pre>
+<p class="note">실행은 <code>pytest 파일명</code> 또는 <code>python -m pytest</code>로 해야 한다.
+<code>python3 test_notes.py</code>처럼 스크립트로 직접 실행하면 함수 정의만 되고 아무것도 호출되지
+않아 그냥 조용히 끝난다.</p>
+
+<h2>fixture (@pytest.fixture)</h2>
+<p>여러 테스트가 똑같이 반복하는 준비 코드(setup)를 함수 하나로 뽑아두는 pytest 기능. 테스트 함수의
+<strong>매개변수 이름이 fixture 함수 이름과 같으면</strong> pytest가 그 fixture를 실행한 결과를
+자동으로 넣어준다. 필요한 테스트만 매개변수로 받으면 되고, 강제되지 않는다.</p>
+<pre><code>import pytest
+
+@pytest.fixture
+def sample_notes():
+    return [{"id": 1, "title": "a", "content": "x"}]
+
+def test_find_note_by_id_existing(sample_notes):
+    assert find_note_by_id(sample_notes, 1) == {"id": 1, "title": "a", "content": "x"}</code></pre>
+
 </body>
 </html>
