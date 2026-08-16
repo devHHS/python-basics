@@ -71,7 +71,11 @@ while True:
                     print(f"ID:{n['id']} | title:{n['title']} | content:{n['content']}")
 
     elif choice == "3":
-        id = int(input("Enter the ID of the note to update: ").strip())
+        try:
+            id = int(input("Enter the ID of the note to update: ").strip())
+        except ValueError:
+            print("Invalid ID. Please enter a number.")
+            continue
         found_note = find_note_by_id(notes, id)
         if found_note is None:
             print(f"Note with ID {id} was not found.")
@@ -84,7 +88,11 @@ while True:
         choice_3 = input("1. Delete by ID 2. Delete by title 3. Delete all: ").strip()
 
         if choice_3 == "1":
-            id = find_note_by_id(notes, int(input("Enter the ID of the note to delete: ").strip()))
+            try:
+                id = find_note_by_id(notes, int(input("Enter the ID of the note to delete: ").strip()))
+            except ValueError:
+                print("Invalid ID. Please enter a number.")
+                continue
             if id is None:
                 print("Note not found.")
             else:

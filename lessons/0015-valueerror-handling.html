@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>레슨 15 — ValueError 처리</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="kicker">Lesson 0015 · Python 기초</div>
+<h1>ValueError 처리 — 숫자가 아닌 ID를 입력하면 죽는 버그 고치기</h1>
+
+<p>
+레슨 2에서 <code>try/except</code>로 <code>FileNotFoundError</code>를 잡아본 적이 있다. 그런데
+<code>notes_app.py</code>에는 아직 못 잡은 에러가 하나 더 있다 — 3번(Update), 4번(Delete) 메뉴에서
+ID를 물어볼 때, 숫자가 아닌 걸 입력하면 프로그램이 그 자리에서 죽는다.
+</p>
+
+<div class="note">
+<strong>새 문법은 <code>try/except</code> 하나뿐이다.</strong> 레슨 2에서 배운 것과 똑같은 구조를,
+다른 종류의 에러(<code>ValueError</code>)에 다시 적용해보는 레슨이다.
+</div>
+
+<h2>핵심 개념 — int()가 못 바꾸면 ValueError</h2>
+<p>
+<code>int(input(...))</code>은 사용자가 입력한 문자열을 정수로 바꾼다. 그런데 <code>"abc"</code>처럼
+숫자로 바꿀 수 없는 문자열을 넣으면 어떻게 될까? 파이썬 인터프리터에게 직접 물어보자:
+</p>
+<pre><code>&gt;&gt;&gt; int("abc")
+Traceback (most recent call last):
+  ...
+ValueError: invalid literal for int() with base 10: 'abc'</code></pre>
+<p>
+<code>ValueError</code>는 "타입은 맞는데(문자열은 문자열이다) 값이 이상해서 원하는 걸 못 만든다"는
+뜻의 에러다. <code>FileNotFoundError</code>를 잡을 때처럼, <code>try</code> 블록 안에 위험한 코드를
+넣고 <code>except ValueError:</code>로 잡으면 프로그램이 죽는 대신 원하는 처리를 할 수 있다.
+</p>
+<pre><code>try:
+    id = int(input("ID: ").strip())
+except ValueError:
+    print("숫자를 입력하세요.")
+    id = None  # 또는 continue, return 등 — 상황에 맞게 뒤처리</code></pre>
+
+<h2>지금 코드의 문제 지점</h2>
+<p><code>notes_app.py</code>에 이런 줄이 두 곳 있다:</p>
+<pre><code># 3번(Update)
+id = int(input("Enter the ID of the note to update: ").strip())
+
+# 4번(Delete) 1번 서브메뉴
+id = find_note_by_id(notes, int(input("Enter the ID of the note to delete: ").strip()))</code></pre>
+<p>
+둘 다 <code>int(...)</code>이 <code>try</code> 없이 바로 실행된다. 숫자가 아닌 값을 넣으면
+<code>ValueError</code>가 그대로 튀어나와 프로그램 전체가 멈춘다 — 다른 메뉴 항목이나 아직 저장 안 된
+변경사항까지 전부 날아간다.
+</p>
+
+<div class="source">
+<span class="label">Primary source</span>
+<a href="https://docs.python.org/3/tutorial/errors.html#handling-exceptions" target="_blank" rel="noopener">
+Python 공식 튜토리얼 — Handling Exceptions</a>
+— <code>try/except</code>가 여러 종류의 에러를 각각 다르게 처리하는 방법(<code>except</code>를 여러 개
+쓰는 것 포함)까지 확인해봐.
+</div>
+
+<div class="quiz" id="quiz">
+<h3>확인 퀴즈</h3>
+
+<div class="q">1. int("12a")를 실행하면 어떤 일이 일어날까?</div>
+<button class="choice" data-correct="false">12를 돌려주고 나머지는 무시한다</button>
+<button class="choice" data-correct="true">ValueError가 발생한다</button>
+<button class="choice" data-correct="false">0을 돌려준다</button>
+<div class="feedback"></div>
+
+<div class="q" style="margin-top:1.2rem">2. try 블록 안의 코드에서 except에 적은 종류의 에러가 나면?</div>
+<button class="choice" data-correct="false">프로그램이 즉시 멈춘다</button>
+<button class="choice" data-correct="true">except 블록으로 넘어가서 거기 적힌 코드를 실행한다</button>
+<button class="choice" data-correct="false">에러를 무시하고 try 블록의 다음 줄로 넘어간다</button>
+<div class="feedback"></div>
+
+<div class="q" style="margin-top:1.2rem">3. try/except로 ValueError를 잡지 않으면 지금 코드에서 무슨 일이 생기나?</div>
+<button class="choice" data-correct="false">"잘못된 입력입니다"라는 메시지가 뜨고 메뉴로 돌아간다</button>
+<button class="choice" data-correct="true">프로그램 전체가 그 자리에서 멈춘다(크래시)</button>
+<button class="choice" data-correct="false">ID가 0으로 처리되어 계속 진행된다</button>
+<div class="feedback"></div>
+
+</div>
+
+<h2>직접 해보기</h2>
+<p><code>notes_app.py</code>에서 진행한다. 한 곳씩 고치고 바로 실행해서 확인한다:</p>
+<ol>
+<li>3번(Update)의 <code>id = int(input(...).strip())</code> 줄을 <code>try/except ValueError</code>로
+감싼다. <code>except</code> 블록에서는 무엇을 해야 할까? — 에러 메시지를 출력하고, 이후의
+<code>find_note_by_id</code> 호출로 넘어가면 안 된다는 걸 생각해보자(<code>continue</code>를 쓸 수도
+있다 — while 루프의 다음 반복으로 바로 넘어가는 문법인데, 필요하면 물어봐도 된다)</li>
+<li>실제로 3번을 골라서 <code>"abc"</code> 같은 값을 넣어보고, 프로그램이 안 죽고 메시지만 뜨는지
+확인한다</li>
+<li>같은 패턴을 4번(Delete)의 1번 서브메뉴에도 적용한다</li>
+<li>고친 뒤 정상적인 ID(숫자)를 넣었을 때도 여전히 잘 동작하는지 확인한다 — 예외 처리를 추가해도
+정상 경로가 깨지면 안 된다</li>
+</ol>
+<p class="note">
+막히면 정답을 바로 묻기보다, "지금 뭐가 안 되는지"와 "왜 그런 것 같은지"부터 말해보자. 그게 이 폴더의
+핵심 학습 목표(에러 읽는 법)다.
+</p>
+
+<div class="ask-claude">
+막히는 부분이 있으면 언제든 Claude에게 질문해. 이 레슨의 담당 교사는 Claude다.
+</div>
+
+<div class="next">
+이전: <a href="./0014-refactor-find-delete-by-id.html">레슨 14 — id 기준 리팩터링</a> ·
+다음: <a href="./0016-pytest-basics.html">레슨 16 — pytest 기초</a> ·
+참고: <a href="../reference/glossary.html">용어 사전</a>
+</div>
+
+<script>
+document.querySelectorAll('.quiz .q').forEach(q => {
+  const buttons = [];
+  let el = q.nextElementSibling;
+  while (el && el.classList.contains('choice')) {
+    buttons.push(el);
+    el = el.nextElementSibling;
+  }
+  const feedback = el;
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const correct = btn.dataset.correct === 'true';
+      buttons.forEach(b => b.classList.remove('correct', 'wrong'));
+      btn.classList.add(correct ? 'correct' : 'wrong');
+      feedback.textContent = correct ? '맞았어.' : '다시 생각해봐.';
+      feedback.style.color = correct ? 'var(--ok)' : 'var(--bad)';
+    });
+  });
+});
+</script>
+
+</body>
+</html>
