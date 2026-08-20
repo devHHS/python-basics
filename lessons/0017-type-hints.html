@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>레슨 17 — 타입 힌트</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="kicker">Lesson 0017 · Python 기초 · 문법</div>
+<h1>타입 힌트 (type hints)</h1>
+
+<p>
+지금까지 <code>def next_id(notes):</code>처럼 매개변수에 어떤 타입의 값이 와야 하는지는 주석이나
+변수 이름으로만 짐작해왔다. <strong>타입 힌트</strong>는 "이 매개변수는 이런 타입, 반환값은 저런
+타입"을 코드에 직접 적어두는 문법이다. 파이썬은 이걸 강제하지 않는다 — 틀려도 실행은 된다. 하지만
+에디터와 사람이 함수를 읽을 때 바로 알 수 있고, 나중에 배울 Pydantic(<code>ai-dev-team</code>에서
+쓸 라이브러리)이 데이터 검증에 쓰는 문법이 바로 이 타입 힌트를 확장한 것이다.
+</p>
+
+<div class="note">
+<strong>중요: 타입 힌트는 강제가 아니다.</strong> <code>def f(x: int): return x</code>에
+<code>f("hello")</code>를 넣어도 파이썬은 에러를 내지 않는다. 타입 힌트는 실행 규칙이 아니라
+"약속"이고, 이 약속을 실제로 검사해주는 게 나중에 배울 Pydantic 같은 도구다.
+</div>
+
+<h2>핵심 개념 1 — 변수와 함수 매개변수</h2>
+<pre><code>title: str = "장보기"
+count: int = 3
+price: float = 9.99
+done: bool = False</code></pre>
+<p>
+함수에서는 매개변수 이름 뒤에 <code>: 타입</code>을 붙이고, 반환값 타입은 <code>-> 타입</code>으로
+괄호 뒤에 적는다.
+</p>
+<pre><code>def add(a: int, b: int) -> int:
+    return a + b</code></pre>
+
+<h2>핵심 개념 2 — list와 dict 안의 타입</h2>
+<p>
+<code>notes.py</code>의 <code>notes</code>는 "딕셔너리들의 리스트"다. 이럴 때는
+<code>list[dict]</code>처럼 대괄호로 안에 뭐가 들었는지 적는다.
+</p>
+<pre><code>def find_all_notes(notes: list[dict]) -> list[dict]:
+    return notes</code></pre>
+
+<h2>핵심 개념 3 — "이거나 None"은 <code>| None</code></h2>
+<p>
+<code>find_note_by_id</code>는 찾으면 dict, 못 찾으면 <code>None</code>을 돌려준다(레슨 7). 이렇게
+"이 타입이거나 None"을 표현할 때는 <code>|</code>(파이프)를 쓴다.
+</p>
+<pre><code>def find_note_by_id(notes: list[dict], id: int) -> dict | None:
+    for n in notes:
+        if n["id"] == id:
+            return n
+    return None</code></pre>
+
+<div class="source">
+<span class="label">Primary source</span>
+<a href="https://docs.python.org/3/library/typing.html#module-typing" target="_blank" rel="noopener">
+Python 공식 문서 — typing 모듈</a>
+— 타입 힌트 전체 문법의 공식 레퍼런스. 지금은 위 세 가지(기본 타입, list[X], X | None)만 알면
+충분하고, 나머지는 필요할 때 찾아보면 된다.
+</div>
+
+<div class="quiz" id="quiz">
+<h3>확인 퀴즈</h3>
+
+<div class="q">1. 타입 힌트를 틀리게 써도 프로그램이 실행되는 이유는?</div>
+<button class="choice" data-correct="false">파이썬이 자동으로 타입을 맞게 바꿔주기 때문</button>
+<button class="choice" data-correct="true">타입 힌트는 강제 규칙이 아니라 사람과 도구를 위한 약속이기 때문</button>
+<button class="choice" data-correct="false">타입 힌트는 주석이라 파이썬이 아예 읽지 않기 때문</button>
+<div class="feedback"></div>
+
+<div class="q" style="margin-top:1.2rem">2. "딕셔너리들의 리스트"를 타입 힌트로 쓰면?</div>
+<button class="choice" data-correct="false">dict[list]</button>
+<button class="choice" data-correct="true">list[dict]</button>
+<button class="choice" data-correct="false">list(dict)</button>
+<div class="feedback"></div>
+
+<div class="q" style="margin-top:1.2rem">3. "dict이거나 None"을 반환 타입으로 쓰면?</div>
+<button class="choice" data-correct="false">dict or None</button>
+<button class="choice" data-correct="false">dict, None</button>
+<button class="choice" data-correct="true">dict | None</button>
+<div class="feedback"></div>
+
+</div>
+
+<h2>직접 해보기</h2>
+<ol>
+<li><code>notes.py</code>를 열어서 <code>next_id(notes)</code>에 타입 힌트를 붙인다 — 매개변수는
+<code>list[dict]</code>, 반환값은 무엇일지 함수 본문을 보고 직접 정한다</li>
+<li><code>find_note_by_id(notes, id)</code>에도 타입 힌트를 붙인다 — <code>id</code>는 어떤 타입인지,
+반환값은 dict만 나올 수 있는지 아니면 다른 것도 나올 수 있는지 함수 본문을 다시 읽고 정한다</li>
+<li>타입 힌트를 붙인 뒤 <code>pytest</code>를 다시 돌려서 여전히 다 통과하는지 확인한다 — 타입
+힌트만 추가했다면 동작은 하나도 안 바뀌어야 정상이다</li>
+<li>일부러 <code>id: str</code>처럼 실제와 다른 타입 힌트를 써보고, 그래도 함수 호출과 테스트가
+멀쩡히 되는지 확인해본다 — "강제가 아니다"를 코드로 직접 겪어본다. 확인 후 원래 타입으로 되돌린다</li>
+</ol>
+<p class="note">
+막히면 정답을 바로 묻기보다, "지금 뭐가 안 되는지"와 "왜 그런 것 같은지"부터 말해보자. 그게 이 폴더의
+핵심 학습 목표(에러 읽는 법)다.
+</p>
+
+<div class="ask-claude">
+막히는 부분이 있으면 언제든 Claude에게 질문해. 이 레슨의 담당 교사는 Claude다.
+</div>
+
+<div class="next">
+이전: <a href="./0016-pytest-basics.html">레슨 16 — pytest로 유닛 테스트 짜기</a> ·
+참고: <a href="../reference/glossary.html">용어 사전</a>
+</div>
+
+<script>
+document.querySelectorAll('.quiz .q').forEach(q => {
+  const buttons = [];
+  let el = q.nextElementSibling;
+  while (el && el.classList.contains('choice')) {
+    buttons.push(el);
+    el = el.nextElementSibling;
+  }
+  const feedback = el;
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const correct = btn.dataset.correct === 'true';
+      buttons.forEach(b => b.classList.remove('correct', 'wrong'));
+      btn.classList.add(correct ? 'correct' : 'wrong');
+      feedback.textContent = correct ? '맞았어.' : '다시 생각해봐.';
+      feedback.style.color = correct ? 'var(--ok)' : 'var(--bad)';
+    });
+  });
+});
+</script>
+
+</body>
+</html>

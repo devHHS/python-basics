@@ -241,5 +241,16 @@ def sample_notes():
 def test_find_note_by_id_existing(sample_notes):
     assert find_note_by_id(sample_notes, 1) == {"id": 1, "title": "a", "content": "x"}</code></pre>
 
+<h2>타입 힌트 (type hint)</h2>
+<p>매개변수와 반환값에 어떤 타입이 오가는지 코드에 적어두는 문법. 강제 규칙이 아니라 사람과 도구를
+위한 약속이다 — 틀려도 실행은 된다. <code>list[dict]</code>처럼 대괄호로 컨테이너 안의 타입을,
+<code>dict | None</code>처럼 파이프로 "이거나 None"을 표현한다.
+<a href="../lessons/0017-type-hints.html">레슨 17</a> 참고.</p>
+<pre><code>def find_note_by_id(notes: list[dict], id: int) -> dict | None:
+    for n in notes:
+        if n["id"] == id:
+            return n
+    return None</code></pre>
+
 </body>
 </html>
