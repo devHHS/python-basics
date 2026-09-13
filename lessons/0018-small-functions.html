@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>레슨 18 — 함수를 작게 쪼개는 이유</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="kicker">Lesson 0018 · Python 기초 · SE 기초</div>
+<h1>함수를 작게 쪼개는 이유</h1>
+
+<p>
+지금까지는 문법 위주로 배웠다면, 이번엔 소프트웨어 엔지니어링(SE) 기초다. <code>notes_app.py</code>를
+열어서 메뉴 <strong>2번(Find)</strong> 안을 보자. "1. Find by title"과 "2. Find all" 두 분기에
+아래 코드가 <strong>토씨 하나 안 틀리고 그대로</strong> 두 번 나온다.
+</p>
+<pre><code>for n in found_notes:
+    print(f"ID:{n['id']} | title:{n['title']} | content:{n['content']}")</code></pre>
+
+<div class="note">
+<strong>질문:</strong> 나중에 출력 형식을 바꾸고 싶어졌다고 해보자 — 예를 들어 content가 너무 길면
+잘라서 보여주고 싶다. 코드를 몇 군데 고쳐야 할까? 만약 두 곳 중 <strong>한 곳만</strong> 고치고
+깜빡한다면 무슨 일이 벌어질까? (레슨 14에서 겪었던 "조용히 실패하는 버그"를 떠올려보자.)
+</div>
+
+<h2>핵심 개념 1 — 중복 코드(DRY)의 위험</h2>
+<p>
+같은 지식(여기서는 "노트를 어떻게 출력할지")이 코드 안에 여러 곳 흩어져 있으면, 그 지식이 바뀔 때마다
+<strong>모든 자리를 빠짐없이</strong> 고쳐야 한다. 하나라도 놓치면 두 화면이 서로 다르게 동작하는
+버그가 생긴다. 이걸 <strong>DRY(Don't Repeat Yourself)</strong> 원칙이라고 부른다 — "같은 지식은
+한 곳에만 있어야 한다."
+</p>
+
+<h2>핵심 개념 2 — 함수로 뽑으면 한 곳만 고치면 된다</h2>
+<p>
+중복된 코드를 함수로 뽑아내는 것을 <strong>Extract Method(메서드/함수 추출)</strong>라고 한다.
+반복되던 코드를 이름 붙은 함수 하나로 만들고, 원래 있던 자리에서는 그 함수를 <em>호출</em>만 하도록
+바꾸는 것이다.
+</p>
+<pre><code>def print_notes(notes_list: list[dict]) -> None:
+    for n in notes_list:
+        print(f"ID:{n['id']} | title:{n['title']} | content:{n['content']}")</code></pre>
+<p>
+이렇게 뽑아두면 출력 형식을 바꿀 일이 생겨도 <code>print_notes</code> 함수 <strong>한 곳만</strong>
+고치면 된다. 덤으로 <code>print_notes(...)</code>라는 이름만 봐도 "아, 노트 목록을 출력하는구나"를
+바로 알 수 있다 — 코드가 더 읽기 쉬워진다.
+</p>
+
+<h2>핵심 개념 3 — 작은 함수와 테스트</h2>
+<p>
+레슨 16~20에서 <code>notes.py</code>의 함수들을 pytest로 테스트했다. 그게 가능했던 이유는 그 함수들이
+값을 <strong>받아서(매개변수) → 계산하고 → 돌려주기(return)</strong>만 했기 때문이다. 반면
+<code>print_notes</code>는 화면에 출력만 하고 아무것도 return하지 않는다 — <code>assert</code>로
+확인할 "결과값"이 없다는 뜻이다. 함수를 작게 쪼개면, 이렇게 "테스트하기 쉬운 순수 계산"과 "테스트하기
+어려운 화면 출력"을 자연스럽게 분리할 수 있다.
+</p>
+
+<div class="source">
+<span class="label">Primary source</span>
+<a href="https://refactoring.guru/extract-method" target="_blank" rel="noopener">
+Refactoring.Guru — Extract Method</a>
+— 오늘 할 리팩터링의 정식 이름과 절차. "더 읽기 쉬운 코드, 중복 제거, 에러 예방"이 이 리팩터링의
+목적이라고 설명한다.
+</div>
+
+<div class="quiz" id="quiz">
+<h3>확인 퀴즈</h3>
+
+<div class="q">1. 똑같은 코드가 여러 군데 반복될 때 가장 위험한 이유는?</div>
+<button class="choice" data-correct="false">코드 실행 속도가 느려지기 때문</button>
+<button class="choice" data-correct="true">고칠 때 한 곳을 빠뜨릴 수 있기 때문</button>
+<button class="choice" data-correct="false">파이썬이 에러를 내며 멈추기 때문</button>
+<div class="feedback"></div>
+
+<div class="q" style="margin-top:1.2rem">2. 중복 코드를 함수로 뽑아낸 뒤에도 프로그램의 동작이 이전과 똑같아야 하는 이유는?</div>
+<button class="choice" data-correct="false">함수가 많아지면 실행 속도가 빨라지기 때문</button>
+<button class="choice" data-correct="true">리팩터링은 동작이 아니라 구조만 바꾸는 것이기 때문</button>
+<button class="choice" data-correct="false">함수 이름이 길어질수록 안정적이기 때문</button>
+<div class="feedback"></div>
+
+<div class="q" style="margin-top:1.2rem">3. print_notes 같은 함수를 notes.py의 함수들처럼 pytest로 테스트하기 어려운 이유는?</div>
+<button class="choice" data-correct="true">return 값 없이 화면 출력만 하기 때문</button>
+<button class="choice" data-correct="false">notes.py 밖에 정의되어 있기 때문</button>
+<button class="choice" data-correct="false">함수 이름이 test로 시작하지 않기 때문</button>
+<div class="feedback"></div>
+
+</div>
+
+<h2>직접 해보기</h2>
+<ol>
+<li><code>notes_app.py</code>에서 완전히 똑같은 두 줄짜리 코드가 반복되는 자리 <strong>두 곳</strong>을
+직접 찾아본다 (힌트: 메뉴 2번 안)</li>
+<li>그 코드를 <code>print_notes(notes_list: list[dict]) -> None</code>이라는 이름의 함수로 뽑아내
+<code>notes_app.py</code> 파일 위쪽(다른 함수/로직 시작 전)에 정의한다</li>
+<li>원래 코드가 있던 두 자리를 각각 <code>print_notes(found_notes)</code> 호출로 바꾼다</li>
+<li><code>python3 notes_app.py</code>로 직접 실행해서 메뉴 2번의 두 분기가 이전과 똑같이 동작하는지
+확인한다 — 동작이 하나도 안 바뀌어야 정상이다(그게 리팩터링이다)</li>
+<li><strong>생각해보기</strong>: <code>print_notes</code>를 pytest로 테스트하려면 뭐가 걸림돌인지,
+notes.py의 함수들과 뭐가 다른지 자기 말로 설명해본다 (정답을 맞히는 게 아니라 차이를 스스로 짚어보는
+연습)</li>
+</ol>
+<p class="note">
+막히면 정답을 바로 묻기보다, "지금 뭐가 안 되는지"와 "왜 그런 것 같은지"부터 말해보자. 그게 이 폴더의
+핵심 학습 목표(에러 읽는 법)다.
+</p>
+
+<div class="ask-claude">
+막히는 부분이 있으면 언제든 Claude에게 질문해. 이 레슨의 담당 교사는 Claude다.
+</div>
+
+<div class="next">
+이전: <a href="./0017-type-hints.html">레슨 17 — 타입 힌트</a> ·
+참고: <a href="../reference/glossary.html">용어 사전</a>
+</div>
+
+<script>
+document.querySelectorAll('.quiz .q').forEach(q => {
+  const buttons = [];
+  let el = q.nextElementSibling;
+  while (el && el.classList.contains('choice')) {
+    buttons.push(el);
+    el = el.nextElementSibling;
+  }
+  const feedback = el;
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const correct = btn.dataset.correct === 'true';
+      buttons.forEach(b => b.classList.remove('correct', 'wrong'));
+      btn.classList.add(correct ? 'correct' : 'wrong');
+      feedback.textContent = correct ? '맞았어.' : '다시 생각해봐.';
+      feedback.style.color = correct ? 'var(--ok)' : 'var(--bad)';
+    });
+  });
+});
+</script>
+
+</body>
+</html>

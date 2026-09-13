@@ -252,5 +252,21 @@ def test_find_note_by_id_existing(sample_notes):
             return n
     return None</code></pre>
 
+<h2>DRY (Don't Repeat Yourself) / 함수 추출 (Extract Method)</h2>
+<p>같은 코드가 여러 곳에 반복되면, 그 지식이 바뀔 때 모든 자리를 빠짐없이 고쳐야 하고 하나라도
+놓치면 버그가 된다 — 이걸 피하자는 게 <strong>DRY</strong> 원칙이다. 반복되는 코드를 이름 붙은
+함수로 뽑아 원래 자리에서는 호출만 하도록 바꾸는 리팩터링을 <strong>Extract Method(함수 추출)</strong>라고
+한다. <a href="../lessons/0018-small-functions.html">레슨 18</a> 참고.</p>
+<pre><code># Before: 두 곳에 똑같은 코드가 반복됨
+for n in found_notes:
+    print(f"ID:{n['id']} | title:{n['title']} | content:{n['content']}")
+
+# After: 함수로 뽑아서 한 곳만 고치면 되게 함
+def print_notes(notes_list: list[dict]) -> None:
+    for n in notes_list:
+        print(f"ID:{n['id']} | title:{n['title']} | content:{n['content']}")</code></pre>
+<p class="note">리팩터링은 <strong>동작을 바꾸지 않고 구조만 바꾸는 것</strong>이다 — 함수로 뽑은
+뒤에도 프로그램은 이전과 똑같이 동작해야 한다.</p>
+
 </body>
 </html>

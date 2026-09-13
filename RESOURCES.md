@@ -12,6 +12,9 @@
   에러(예외)를 읽고 다루는 법. Use for: Traceback 읽기, 나중에 예외 처리(try/except) 배울 때.
 - [pytest 공식 문서 — Get Started](https://docs.pytest.org/en/stable/getting-started.html)
   pytest 설치와 첫 테스트 작성법. Use for: 유닛 테스트 작성/실행 문법이 헷갈릴 때.
+- [Refactoring.Guru — Extract Method](https://refactoring.guru/extract-method)
+  중복 코드를 함수로 뽑아내는 리팩터링(DRY 원칙)의 정식 절차와 이유. Use for: "함수를 왜/어떻게
+  작게 쪼개는가" 같은 SE 기초 개념이 헷갈릴 때.
 
 ## Wisdom (Communities)
 
@@ -19,4 +22,4 @@
   파이썬 입문자를 위한 활발한 커뮤니티. Use for: 막힌 코드에 대해 질문하거나, 다른 초보자들의 코드를 보며 감 잡을 때.
 
 ## Gaps
-- 소프트웨어 엔지니어링 기초(함수 설계, 작은 커밋 단위) 관련 한국어 자료는 아직 못 찾음 — 필요해지면 추가 탐색.
+- 작은 커밋 단위 관련 한국어 자료는 아직 못 찾음 — 필요해지면 추가 탐색 (함수 설계 쪽은 Extract Method로 채움).

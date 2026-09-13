@@ -1,6 +1,12 @@
 import json
 from notes import add_note, find_note_by_id, find_all_by_title, find_all_notes, update_note, search_title
 
+# 메뉴 2번의 두 분기(제목으로 찾기 / 전체 보기)에서 똑같이 반복되던 출력 코드를
+# 함수로 뽑아냈다 (Extract Method) — 형식을 바꿀 일이 생기면 이제 한 곳만 고치면 된다.
+def print_notes(notes_list: list[dict]) -> None:
+    for n in notes_list:
+        print(f"ID:{n['id']} | title:{n['title']} | content:{n['content']}")
+
 # json.dump(note, f) / json.load(f): 딕셔너리 하나를 파일에 저장하고 다시 불러오는 방법.
 # (노트를 여러 개 다루도록 리스트로 바꿨기 때문에, 지금은 참고용으로만 남겨둔다.)
 # with open("note.json", "w") as f:
@@ -59,16 +65,14 @@ while True:
             if not found_notes:
                 print(f"{title} was not found.")
             else:
-                for n in found_notes:
-                    print(f"ID:{n['id']} | title:{n['title']} | content:{n['content']}")
+                print_notes(found_notes)
 
-        elif choice_2 == "2":   
+        elif choice_2 == "2":
             found_notes = find_all_notes(notes)
             if not found_notes:
                 print("No notes found.")
             else:
-                for n in found_notes:
-                    print(f"ID:{n['id']} | title:{n['title']} | content:{n['content']}")
+                print_notes(found_notes)
 
     elif choice == "3":
         try:
